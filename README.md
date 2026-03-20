@@ -1,11 +1,20 @@
 # questcraft-Offline-account-creator
+
 Used for creating offline accounts in QuestCraft, providing a creator tool for players who don’t have the official version.
 
-** The implementation principle involves modifying the Android directory to download the trial account from the /data/user/0/com.qcxr.qcxr/files/accounts directory.
-Modified content: "isDemoMode": false.
+## How to achieve it
+The implementation principle involves modifying the Android directory to download the trial account from the /data/user/0/com.qcxr.qcxr/files/accounts directory.
+Modified content:
+
+```bash
+"isDemoMode": false.
 "username":
 "uuid":
+```
+
 After making these changes, it will function as an offline account. Additionally, the file in storage/emulated/0/Android/data/com.qcxr.qcxr/files/launcher.conf needs to be modified so that the account information can be properly displayed.
+
+```bash
 {
 "acceptedLegal": true,
 "setDevMods": false,
@@ -20,4 +29,6 @@ After making these changes, it will function as an offline account. Additionally
 }
 ]
 }
+```
+
 In this way, you have successfully added an account. However, please note that if you’ve previously installed the game version, you don’t need to be connected to the internet. The account will only take effect when you start the game with the internet disconnected. If you’re connected to the internet, the account won’t function.
