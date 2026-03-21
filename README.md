@@ -8,7 +8,7 @@ The implementation principle involves modifying the Android directory the DemoMo
 Modified content:
 ```bash
 "isDemoMode": false,
-"username": "",
+"username": ""
 "uuid": ""
 ```
 After making these changes, it will function as an offline account, Additionally, the file in  [storage/emulated/0/Android/data/com.qcxr.qcxr/files/launcher.conf]  needs to be modified so that the account information can be properly displayed:
