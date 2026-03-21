@@ -1,0 +1,32 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color dark_background
+color dark_surface
+color dark_text_primary
+color dark_text_secondary
+color purple_200
+color purple_500
+color purple_700
+color teal_200
+color teal_700
+color white
+drawable ic_launcher_foreground
+id createAccountBtn
+id customRamCheck
+id demoModeCheck
+id devModsCheck
+id generateUuidBtn
+id importAccountBtn
+id legalCheck
+id ramValueInput
+id saveConfigBtn
+id usernameInput
+id uuidDisplay
+layout activity_main
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+style Theme.QcofA
+xml backup_rules
+xml data_extraction_rules

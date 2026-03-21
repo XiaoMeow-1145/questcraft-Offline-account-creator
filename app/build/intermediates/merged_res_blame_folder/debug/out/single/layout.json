@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "cn.qcofa.com.app-mergeDebugResources-30:/layout/activity_main.xml",
+        "source": "cn.qcofa.com.app-main-33:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/admin/.gradle/daemon/8.10.2/cn.qcofa.com.app-mergeDebugResources-30:/layout/activity_main.xml",
+        "source": "/home/admin/.gradle/daemon/8.10.2/cn.qcofa.com.app-main-33:/layout/activity_main.xml"
+    }
+]
