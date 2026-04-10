@@ -30,5 +30,8 @@ After making these changes, it will function as an offline account, Additionally
 ```
 In this way you have successfully added an account However please note that if you’ve previously installed the game version, you don’t need to be connected to the internet The account will only take effect when you start the game with the internet disconnected If you’re reconnected to the internet the account won’t function
 
+## 此项目只支持YVR，原因如下
+因为该设备已经可以root了，其他设备还需要进一步研究
+
 # How to use it
 Download the first alpha version for testing purposes. Note that it’s .sh (So you can only use it on a terminal or any software that comes with its own terminal) executable file, and it’s currently intended for use by Chinese users
