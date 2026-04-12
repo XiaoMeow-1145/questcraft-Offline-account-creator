@@ -34,4 +34,8 @@ In this way you have successfully added an account However please note that if y
 因为该设备已经可以root了，其他设备还需要进一步研究
 
 # How to use it
-Download the first alpha version for testing purposes. Note that it’s .sh (So you can only use it on a terminal or any software that comes with its own terminal) executable file, and it’s currently intended for use by Chinese users
+Download the first released graphical configuration interface. After downloading and installing it, you can customize and edit various options related to the demo account, including the demo mode switch. All the generated files will be in this directory.
+/storage/emulated/0/Android/data/cn.qcofa.com/files/
+All JSON files in the questcraft_accounts folder are here.
+The launcher.conf file in the files root directory is also here. I’ve updated it to enable support for multiple accounts
+
