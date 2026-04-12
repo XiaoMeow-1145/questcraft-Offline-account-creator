@@ -30,9 +30,6 @@ After making these changes, it will function as an offline account, Additionally
 ```
 In this way you have successfully added an account However please note that if you’ve previously installed the game version, you don’t need to be connected to the internet The account will only take effect when you start the game with the internet disconnected If you’re reconnected to the internet the account won’t function
 
-## 此项目只支持YVR，原因如下
-因为该设备已经可以root了，其他设备还需要进一步研究
-
 # How to use it
 Download the first released graphical configuration interface. After downloading and installing it, you can customize and edit various options related to the demo account, including the demo mode switch. All the generated files will be in this directory.
 /storage/emulated/0/Android/data/cn.qcofa.com/files/
