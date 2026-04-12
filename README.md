@@ -39,3 +39,22 @@ Download the first released graphical configuration interface. After downloading
 All JSON files in the questcraft_accounts folder are here.
 The launcher.conf file in the files root directory is also here. I’ve updated it to enable support for multiple accounts
 
+## How to import?
+Use the injection file provider of the mt file manager to convert your existing installed qc into a function of the injection file provider.
+For details, please refer to this project.
+[https://github.com/L-JINBIN/MTDataFilesProvider]
+
+Place the json file you just generated and the launcher.conf file in their respective directories
+
+XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.json import
+```bash
+/data/user/0/com.qcxr.qcxr/files/accounts
+```
+
+launcher.conf import
+```bash
+/storage/emulated/0/Android/data/com.qcxr.qcxr/files/
+```
+
+If you installed any version of Minecraft before this, you can simply start the game with the network disconnected (reconnect the network if you want to play online or on a server).
+If you have never installed any version before, please install the version while connected to the internet first
