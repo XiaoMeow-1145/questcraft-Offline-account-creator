@@ -8,6 +8,8 @@
 * [x] YVR 1/2/PFD MR
 * [ ] QIYU Dream/700/MIX
 
+Theoretically any Android device can use this method
+
 ## How to achieve it
 The implementation principle involves modifying the Android directory the DemoMode account from the  [/data/user/0/com.qcxr.qcxr/files/accounts] Get this file (you Android root access required) The username can be any name, but the UUID may require a specific value Change the DemoMode to false 
 Modified content:
