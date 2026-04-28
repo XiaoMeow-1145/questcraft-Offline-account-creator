@@ -7,6 +7,8 @@
 * [x] Quest 2/3/3s
 * [x] Pico 3/4/4pro
 * [x] YVR 1/2/PFD MR
+      
+Devices supported in the future
 * [ ] QIYU Dream/700/MIX
 
 Theoretically any Android device can use this method
