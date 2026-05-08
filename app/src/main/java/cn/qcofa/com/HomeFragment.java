@@ -1,15 +1,9 @@
 package cn.qcofa.com;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.documentfile.provider.DocumentFile;
-
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -17,25 +11,24 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity {
+public class HomeFragment extends Fragment {
 
-    private static final String TAG = "QcofA";
-    private static final int PERMISSION_REQUEST_CODE = 100;
-    
     private EditText usernameInput;
     private EditText customUuidInput;
     private Spinner userTypeSpinner;
@@ -43,48 +36,49 @@ public class MainActivity extends AppCompatActivity {
     private EditText ramValueInput;
     private CheckBox legalCheck, devModsCheck, customRamCheck, demoModeCheck;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // 初始化UI组件
-        initViews();
-
-        // 加载并显示当前账号信息
-        loadAndShowCurrentAccount();
-
-        // 请求必要的权限
-        requestPermissions();
-
-        // 设置按钮点击事件
-        setupClickListeners();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
-    private void initViews() {
-        usernameInput = findViewById(R.id.usernameInput);
-        customUuidInput = findViewById(R.id.customUuidInput);
-        userTypeSpinner = findViewById(R.id.userTypeSpinner);
-        uuidDisplay = findViewById(R.id.uuidDisplay);
-        ramValueInput = findViewById(R.id.ramValueInput);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         
-        legalCheck = findViewById(R.id.legalCheck);
-        devModsCheck = findViewById(R.id.devModsCheck);
-        customRamCheck = findViewById(R.id.customRamCheck);
-        demoModeCheck = findViewById(R.id.demoModeCheck);
+        // 初始化UI组件
+        initViews(view);
+        
+        // 加载并显示当前账号信息
+        loadAndShowCurrentAccount();
+        
+        // 设置按钮点击事件
+        setupClickListeners(view);
+    }
+
+    private void initViews(View view) {
+        usernameInput = view.findViewById(R.id.usernameInput);
+        customUuidInput = view.findViewById(R.id.customUuidInput);
+        userTypeSpinner = view.findViewById(R.id.userTypeSpinner);
+        uuidDisplay = view.findViewById(R.id.uuidDisplay);
+        ramValueInput = view.findViewById(R.id.ramValueInput);
+        
+        legalCheck = view.findViewById(R.id.legalCheck);
+        devModsCheck = view.findViewById(R.id.devModsCheck);
+        customRamCheck = view.findViewById(R.id.customRamCheck);
+        demoModeCheck = view.findViewById(R.id.demoModeCheck);
 
         // 设置用户类型选择器
         setupUserTypeSpinner();
 
         // 设置默认值
         ramValueInput.setText("2048");
-        // 不再自动设置用户名，让用户自行输入
     }
 
     private void setupUserTypeSpinner() {
         // 创建适配器并添加选项
         android.widget.ArrayAdapter<CharSequence> adapter = android.widget.ArrayAdapter.createFromResource(
-                this, 
+                requireContext(), 
                 R.array.user_types_array, 
                 android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -94,37 +88,13 @@ public class MainActivity extends AppCompatActivity {
         userTypeSpinner.setSelection(0);
     }
 
-    private void requestPermissions() {
-        // 对于我们的应用，使用应用专属存储空间，不需要外部存储权限
-        // Android 11+ 不再需要 MANAGE_EXTERNAL_STORAGE 权限来访问应用专属目录
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            // Android 10及以下版本的读写权限
-            String[] permissions = {
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            };
-            
-            boolean needsPermission = false;
-            for (String permission : permissions) {
-                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                    needsPermission = true;
-                    break;
-                }
-            }
-            
-            if (needsPermission) {
-                requestPermissions(permissions, PERMISSION_REQUEST_CODE);
-            }
-        }
-    }
-
-    private void setupClickListeners() {
-        Button createAccountBtn = findViewById(R.id.createAccountBtn);
+    private void setupClickListeners(View view) {
+        Button createAccountBtn = view.findViewById(R.id.createAccountBtn);
         createAccountBtn.setOnClickListener(v -> createAccountFile());
 
-        Button saveConfigBtn = findViewById(R.id.saveConfigBtn);
+        Button saveConfigBtn = view.findViewById(R.id.saveConfigBtn);
         saveConfigBtn.setOnClickListener(v -> saveConfigFiles());
-
+        
         // 为用户名输入框添加文本变化监听器，自动触发UUID生成
         usernameInput.addTextChangedListener(new android.text.TextWatcher() {
             @Override
@@ -183,9 +153,9 @@ public class MainActivity extends AppCompatActivity {
                 md5.substring(20, 32));
             
             uuidDisplay.setText("UUID: " + formattedUUID);
-            Toast.makeText(this, "UUID生成成功", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "UUID生成成功", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "UUID生成失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "UUID生成失败", Toast.LENGTH_SHORT).show();
         }
     }
     
@@ -211,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                 
                 uuidDisplay.setText("UUID: " + formattedUUID);
             } else {
-                Toast.makeText(this, "UUID生成失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "UUID生成失败", Toast.LENGTH_SHORT).show();
             }
         } else if (!customUuid.isEmpty()) {
             // 如果自定义UUID不为空，则显示自定义UUID
@@ -226,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String md5Hash(String input) {
         try {
-            Log.d("QcofA", "计算MD5: " + input);
+            android.util.Log.d("QcofA", "计算MD5: " + input);
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] messageDigest = md.digest(input.getBytes());
             BigInteger no = new BigInteger(1, messageDigest);
@@ -236,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return hashtext;
         } catch (Exception e) {
-            Log.e("QcofA", "MD5哈希计算失败", e);
+            android.util.Log.e("QcofA", "MD5哈希计算失败", e);
             return UUID.randomUUID().toString().replace("-", "").substring(0, 32);
         }
     }
@@ -244,22 +214,22 @@ public class MainActivity extends AppCompatActivity {
     private void createAccountFile() {
         String username = usernameInput.getText().toString().trim();
         if (username.isEmpty()) {
-            Toast.makeText(this, "请输入用户名", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "请输入用户名", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String uuid = extractUUIDFromDisplay();
         if (uuid == null || uuid.isEmpty()) {
-            Toast.makeText(this, "请先生成UUID", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "请先生成UUID", Toast.LENGTH_SHORT).show();
             return;
         }
 
         try {
             // 创建存储目录
-            File storageDir = new File(getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = new File(requireContext().getExternalFilesDir(null), "questcraft_accounts");
             if (!storageDir.exists()) {
                 storageDir.mkdirs();
-                Log.d(TAG, "创建目录: " + storageDir.getAbsolutePath());
+                android.util.Log.d("QcofA", "创建目录: " + storageDir.getAbsolutePath());
             }
 
             // 创建账号JSON文件
@@ -277,19 +247,19 @@ public class MainActivity extends AppCompatActivity {
             writer.write(accountJson.toString(2)); // 格式化缩进
             writer.close();
 
-            Toast.makeText(this, "账号文件创建成功: " + jsonFile.getName(), Toast.LENGTH_LONG).show();
-            Log.d(TAG, "账号文件创建成功: " + jsonFile.getAbsolutePath());
+            Toast.makeText(requireContext(), "账号文件创建成功: " + jsonFile.getName(), Toast.LENGTH_LONG).show();
+            android.util.Log.d("QcofA", "账号文件创建成功: " + jsonFile.getAbsolutePath());
 
         } catch (Exception e) {
-            Log.e(TAG, "创建账号文件失败", e);
-            Toast.makeText(this, "创建账号文件失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            android.util.Log.e("QcofA", "创建账号文件失败", e);
+            Toast.makeText(requireContext(), "创建账号文件失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     private void updateLauncherConf(String username, String uuid) {
         try {
             // 创建launcher.conf文件
-            File storageDir = new File(getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = new File(requireContext().getExternalFilesDir(null), "questcraft_accounts");
             File confFile = new File(storageDir, "launcher.conf");
 
             JSONObject confJson = new JSONObject();
@@ -334,25 +304,25 @@ public class MainActivity extends AppCompatActivity {
             writer.write(confJson.toString(2)); // 格式化缩进
             writer.close();
 
-            Toast.makeText(this, "配置文件更新成功: " + confFile.getName(), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "配置文件更新成功: " + confFile.getAbsolutePath());
+            Toast.makeText(requireContext(), "配置文件更新成功: " + confFile.getName(), Toast.LENGTH_SHORT).show();
+            android.util.Log.d("QcofA", "配置文件更新成功: " + confFile.getAbsolutePath());
 
         } catch (Exception e) {
-            Log.e(TAG, "更新配置文件失败", e);
-            Toast.makeText(this, "更新配置文件失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            android.util.Log.e("QcofA", "更新配置文件失败", e);
+            Toast.makeText(requireContext(), "更新配置文件失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
     private void saveConfigFiles() {
         String username = usernameInput.getText().toString().trim();
         if (username.isEmpty()) {
-            Toast.makeText(this, "请输入用户名", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "请输入用户名", Toast.LENGTH_SHORT).show();
             return;
         }
 
         String uuid = extractUUIDFromDisplay();
         if (uuid == null || uuid.isEmpty()) {
-            Toast.makeText(this, "请先生成UUID", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "请先生成UUID", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -366,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void saveCurrentAccount(String username, String uuid) {
-        android.content.SharedPreferences prefs = getSharedPreferences("current_account", android.content.Context.MODE_PRIVATE);
+        android.content.SharedPreferences prefs = requireContext().getSharedPreferences("current_account", android.content.Context.MODE_PRIVATE);
         android.content.SharedPreferences.Editor editor = prefs.edit();
         editor.putString("username", username);
         editor.putString("uuid", uuid);
@@ -374,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void loadAndShowCurrentAccount() {
-        android.content.SharedPreferences prefs = getSharedPreferences("current_account", android.content.Context.MODE_PRIVATE);
+        android.content.SharedPreferences prefs = requireContext().getSharedPreferences("current_account", android.content.Context.MODE_PRIVATE);
         String username = prefs.getString("username", "");
         String uuid = prefs.getString("uuid", "");
         
@@ -389,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
         String uuid = extractUUIDFromDisplay();
         
         if (!username.isEmpty() && !uuid.isEmpty()) {
-            Toast.makeText(this, "当前账号：\n用户名: " + username + "\nUUID: " + uuid, Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), "当前账号：\n用户名: " + username + "\nUUID: " + uuid, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -412,26 +382,5 @@ public class MainActivity extends AppCompatActivity {
         
         reader.close();
         return sb.toString().trim();
-    }
-    
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            boolean allGranted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
-                }
-            }
-            
-            if (allGranted) {
-                Toast.makeText(this, "权限获取成功", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "缺少必要权限，部分功能可能无法正常使用", Toast.LENGTH_LONG).show();
-            }
-        }
     }
 }
