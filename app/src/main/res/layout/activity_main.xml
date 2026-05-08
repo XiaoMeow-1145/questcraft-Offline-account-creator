@@ -6,7 +6,6 @@
     android:padding="16dp">
 
 
-
     <!-- 第一个模块：离线账户配置 -->
     <TextView
         android:layout_width="match_parent"
@@ -29,25 +28,29 @@
             android:hint="用户名" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginBottom="10dp">
-
-        <TextView
-            android:layout_width="0dp"
+        
+        <EditText
+            android:id="@+id/customUuidInput"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="UUID自动生成" />
+            android:hint="自定义UUID (留空则自动生成)" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/generateUuidBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="生成UUID" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="用户类型 (修改userType字段)"
+        android:layout_marginBottom="5dp" />
 
-    </LinearLayout>
+    <Spinner
+        android:id="@+id/userTypeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp" />
 
     <TextView
         android:id="@+id/uuidDisplay"
@@ -122,14 +125,5 @@
         android:layout_height="wrap_content"
         android:text="保存配置文件"
         android:layout_marginBottom="20dp" />
-
-    <!-- 导入功能 -->
-    <Button
-        android:id="@+id/importAccountBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="导入账号"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp" />
 
 </LinearLayout>
