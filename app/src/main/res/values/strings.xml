@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">QcofA</string>
+    
+    <string-array name="user_types_array">
+        <item>msa</item>
+        <item>offline</item>
+    </string-array>
 </resources>
