@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">QcofA - QuestCraft账号创建器</string>
+    <string name="nav_home">主页</string>
+    <string name="nav_about">关于</string>
+    <string name="section_account">配置离线账户</string>
+    <string name="section_config">用户配置</string>
+    <string name="hint_username">用户名</string>
+    <string name="hint_custom_uuid">自定义UUID (留空则自动生成)</string>
+    <string name="label_user_type">用户类型</string>
+    <string name="label_uuid">UUID</string>
+    <string name="btn_create_account">创建账号文件</string>
+    <string name="btn_save_config">保存配置文件</string>
+    <string name="check_legal">已接受法律条款</string>
+    <string name="check_dev_mods">启用开发者模组</string>
+    <string name="check_custom_ram">自定义内存</string>
+    <string name="check_demo_mode">演示模式</string>
+    <string name="hint_ram_value">自定义内存值 (如: 2048)</string>
+    <string name="success_uuid_generated">UUID生成成功</string>
+    <string name="error_uuid_failed">UUID生成失败</string>
+    <string name="error_empty_username">请输入用户名</string>
+    <string name="error_no_uuid">请先生成UUID</string>
+    <string name="success_account_created">账号文件创建成功</string>
+    <string name="error_account_failed">创建账号文件失败</string>
+    <string name="success_config_saved">配置文件更新成功</string>
+    <string name="error_config_failed">更新配置文件失败</string>
+    <string name="permission_granted">权限获取成功</string>
+    <string name="permission_denied">缺少必要权限，部分功能可能无法正常使用</string>
+    <string name="current_account">当前账号</string>
+    <string name="about_title">关于</string>
+    <string name="about_subtitle">QuestCraft 离线账号创建器</string>
+    <string name="about_version">版本信息</string>
+    <string name="about_source">源码出处</string>
+    <string name="about_features">功能说明</string>
+    <string name="about_feature_1">• 创建离线Minecraft账号文件</string>
+    <string name="about_feature_2">• 支持自定义UUID</string>
+    <string name="about_feature_3">• 支持选择用户类型(msa/offline)</string>
+    <string name="about_feature_4">• 自动UUID生成</string>
+    <string name="about_source_url">https://github.com/XiaoMeow-114514/questcraft-Offline-account-creator</string>
+    <string name="copy">复制</string>
+    <string name="copy_success">已复制到剪贴板</string>
+
+    <string-array name="user_types_array">
+        <item>msa</item>
+        <item>offline</item>
+    </string-array>
+</resources>
