@@ -5,7 +5,10 @@ import androidx.core.content.ContextCompat;
 import androidx.documentfile.provider.DocumentFile;
 
 import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,6 +25,7 @@ import org.json.JSONArray;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView uuidDisplay;
     private EditText ramValueInput;
     private CheckBox legalCheck, devModsCheck, customRamCheck, demoModeCheck;
+    private Button manualInstallJreBtn;
+    private Button viewAccountsBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         devModsCheck = findViewById(R.id.devModsCheck);
         customRamCheck = findViewById(R.id.customRamCheck);
         demoModeCheck = findViewById(R.id.demoModeCheck);
+        manualInstallJreBtn = findViewById(R.id.manualInstallJreBtn);
+        viewAccountsBtn = findViewById(R.id.viewAccountsBtn);
 
         // 设置用户类型选择器
         setupUserTypeSpinner();
@@ -82,40 +90,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUserTypeSpinner() {
-        // 创建适配器并添加选项
-        android.widget.ArrayAdapter<CharSequence> adapter = android.widget.ArrayAdapter.createFromResource(
-                this, 
-                R.array.user_types_array, 
-                android.R.layout.simple_spinner_item);
+        String[] userTypes = {"mojang", "legacy"};
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(this, 
+            android.R.layout.simple_spinner_item, userTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         userTypeSpinner.setAdapter(adapter);
-        
-        // 设置默认选中项为"msa"
-        userTypeSpinner.setSelection(0);
-    }
-
-    private void requestPermissions() {
-        // 对于我们的应用，使用应用专属存储空间，不需要外部存储权限
-        // Android 11+ 不再需要 MANAGE_EXTERNAL_STORAGE 权限来访问应用专属目录
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
-            // Android 10及以下版本的读写权限
-            String[] permissions = {
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            };
-            
-            boolean needsPermission = false;
-            for (String permission : permissions) {
-                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                    needsPermission = true;
-                    break;
-                }
-            }
-            
-            if (needsPermission) {
-                requestPermissions(permissions, PERMISSION_REQUEST_CODE);
-            }
-        }
     }
 
     private void setupClickListeners() {
@@ -124,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
 
         Button saveConfigBtn = findViewById(R.id.saveConfigBtn);
         saveConfigBtn.setOnClickListener(v -> saveConfigFiles());
+
+        manualInstallJreBtn.setOnClickListener(v -> showJreInstallationDialog());
+        
+        viewAccountsBtn.setOnClickListener(v -> showAccountsList());
 
         // 为用户名输入框添加文本变化监听器，自动触发UUID生成
         usernameInput.addTextChangedListener(new android.text.TextWatcher() {
@@ -161,72 +144,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void generateUUID() {
-        String username = usernameInput.getText().toString().trim();
-        if (username.isEmpty()) {
-            // 如果用户名为空，生成随机用户名
-            username = "Player_" + System.currentTimeMillis() % 10000;
-            usernameInput.setText(username);
-        }
-
-        // 生成离线UUID - 使用与shell脚本相同的算法
-        String offline = "offline player:" + username;
-        String md5 = md5Hash(offline);
-        
-        // 格式化为UUID格式
-        if (md5.length() >= 32) {
-            String formattedUUID = String.format("%s-%s-%s-%s-%s",
-                md5.substring(0, 8),
-                md5.substring(8, 12),
-                md5.substring(12, 16),
-                md5.substring(16, 20),
-                md5.substring(20, 32));
-            
-            uuidDisplay.setText("UUID: " + formattedUUID);
-            Toast.makeText(this, "UUID生成成功", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "UUID生成失败", Toast.LENGTH_SHORT).show();
-        }
-    }
-    
     private void autoGenerateUUIDIfNeeded() {
-        // 检查自定义UUID输入框是否为空
-        String customUuid = customUuidInput.getText().toString().trim();
         String username = usernameInput.getText().toString().trim();
-        
-        // 如果自定义UUID输入框为空且用户名不为空，则自动生成UUID
-        if (customUuid.isEmpty() && !username.isEmpty()) {
-            // 生成离线UUID - 使用与shell脚本相同的算法
-            String offline = "offline player:" + username;
-            String md5 = md5Hash(offline);
-            
-            // 格式化为UUID格式
-            if (md5.length() >= 32) {
-                String formattedUUID = String.format("%s-%s-%s-%s-%s",
-                    md5.substring(0, 8),
-                    md5.substring(8, 12),
-                    md5.substring(12, 16),
-                    md5.substring(16, 20),
-                    md5.substring(20, 32));
-                
-                uuidDisplay.setText("UUID: " + formattedUUID);
-            } else {
-                Toast.makeText(this, "UUID生成失败", Toast.LENGTH_SHORT).show();
-            }
-        } else if (!customUuid.isEmpty()) {
-            // 如果自定义UUID不为空，则显示自定义UUID
-            uuidDisplay.setText("UUID: " + customUuid);
+        if (!username.isEmpty()) {
+            String generatedUUID = generateUUID(username);
+            uuidDisplay.setText("UUID: " + generatedUUID);
+        } else {
+            uuidDisplay.setText("UUID: ");
         }
     }
-    
-    private String getUserType() {
-        // 获取Spinner中选中的用户类型
-        return userTypeSpinner.getSelectedItem().toString();
-    }
 
-    private String md5Hash(String input) {
+    private String generateUUID(String input) {
         try {
-            Log.d("QcofA", "计算MD5: " + input);
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] messageDigest = md.digest(input.getBytes());
             BigInteger no = new BigInteger(1, messageDigest);
@@ -239,6 +168,14 @@ public class MainActivity extends AppCompatActivity {
             Log.e("QcofA", "MD5哈希计算失败", e);
             return UUID.randomUUID().toString().replace("-", "").substring(0, 32);
         }
+    }
+
+    private String extractUUIDFromDisplay() {
+        String uuidText = uuidDisplay.getText().toString();
+        if (uuidText.startsWith("UUID: ")) {
+            return uuidText.substring(6); // 移除 "UUID: " 前缀
+        }
+        return uuidText;
     }
 
     private void createAccountFile() {
@@ -279,6 +216,9 @@ public class MainActivity extends AppCompatActivity {
 
             Toast.makeText(this, "账号文件创建成功: " + jsonFile.getName(), Toast.LENGTH_LONG).show();
             Log.d(TAG, "账号文件创建成功: " + jsonFile.getAbsolutePath());
+            
+            // 同时更新launcher.conf文件，将新创建的账号添加到配置文件中
+            updateLauncherConf(username, uuid);
 
         } catch (Exception e) {
             Log.e(TAG, "创建账号文件失败", e);
@@ -343,6 +283,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private String getUserType() {
+        return userTypeSpinner.getSelectedItem().toString();
+    }
+
+    private String readFileToString(File file) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        reader.close();
+        return sb.toString().trim();
+    }
+
     private void saveConfigFiles() {
         String username = usernameInput.getText().toString().trim();
         if (username.isEmpty()) {
@@ -364,17 +319,16 @@ public class MainActivity extends AppCompatActivity {
         // 显示当前账号信息
         showCurrentAccountInfo();
     }
-    
+
     private void saveCurrentAccount(String username, String uuid) {
-        android.content.SharedPreferences prefs = getSharedPreferences("current_account", android.content.Context.MODE_PRIVATE);
-        android.content.SharedPreferences.Editor editor = prefs.edit();
+        SharedPreferences.Editor editor = getSharedPreferences("current_account", MODE_PRIVATE).edit();
         editor.putString("username", username);
         editor.putString("uuid", uuid);
         editor.apply();
     }
-    
+
     private void loadAndShowCurrentAccount() {
-        android.content.SharedPreferences prefs = getSharedPreferences("current_account", android.content.Context.MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences("current_account", MODE_PRIVATE);
         String username = prefs.getString("username", "");
         String uuid = prefs.getString("uuid", "");
         
@@ -383,7 +337,120 @@ public class MainActivity extends AppCompatActivity {
             uuidDisplay.setText("UUID: " + uuid);
         }
     }
-    
+
+    private void showJreInstallationDialog() {
+        // 创建带有三个按钮的对话框
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("手动安装JRE Runtime");
+        builder.setMessage("当您启动游戏过程中无法正常下载和安装JRE提供了两个选项可以给您手动下载和安装JRE");
+
+        // 添加"手动下载安装"按钮
+        builder.setPositiveButton("手动下载安装", (dialog, which) -> openJreDownloadPage());
+        
+        // 添加"本地导出JRE"按钮
+        builder.setNeutralButton("本地导出JRE", (dialog, which) -> exportJreToPrivateDirectory());
+        
+        // 添加"取消"按钮
+        builder.setNegativeButton("取消", null);
+        
+        builder.show();
+    }
+
+    private void openJreDownloadPage() {
+        try {
+            // 打开浏览器跳转到JRE下载页面
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/QuestCraftPlusPlus/android-openjdk-build-multiarch/releases/tag/jre22-6.0.0"));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "无法打开浏览器: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void exportJreToPrivateDirectory() {
+        try {
+            // 获取应用外部私有目录 (/storage/emulated/0/Android/data/cn.qcofa.com/files/)
+            File privateDir = getExternalFilesDir("jre_runtime");
+            if (privateDir == null) {
+                // 如果外部存储不可用，则使用内部存储
+                privateDir = new File(getFilesDir(), "jre_runtime");
+            }
+            
+            if (!privateDir.exists()) {
+                privateDir.mkdirs();
+            }
+
+            // 定义目标文件路径
+            File jreZipFile = new File(privateDir, "JRE.zip");
+
+            // 从assets中读取JRE.zip并写入私有目录
+            InputStream inputStream = getAssets().open("JRE.zip");
+            FileOutputStream outputStream = new FileOutputStream(jreZipFile);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            Toast.makeText(this, "JRE已成功导出到目录: " + jreZipFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Log.e(TAG, "导出JRE失败", e);
+            Toast.makeText(this, "导出JRE失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showAccountsList() {
+        try {
+            // 读取launcher.conf文件
+            File storageDir = new File(getExternalFilesDir(null), "questcraft_accounts");
+            File confFile = new File(storageDir, "launcher.conf");
+            
+            if (!confFile.exists()) {
+                Toast.makeText(this, "暂无已创建的账号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            String content = readFileToString(confFile);
+            JSONObject confJson = new JSONObject(content);
+            
+            if (!confJson.has("accounts")) {
+                Toast.makeText(this, "暂无已创建的账号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            JSONArray accountsArray = confJson.getJSONArray("accounts");
+            
+            if (accountsArray.length() == 0) {
+                Toast.makeText(this, "暂无已创建的账号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            // 创建账号列表字符串
+            StringBuilder accountsList = new StringBuilder("已创建的账号列表:\n\n");
+            for (int i = 0; i < accountsArray.length(); i++) {
+                JSONObject account = accountsArray.getJSONObject(i);
+                String username = account.getString("username");
+                String uuid = account.getString("uuid");
+                accountsList.append("用户名: ").append(username).append("\n");
+                accountsList.append("UUID: ").append(uuid).append("\n\n");
+            }
+            
+            // 显示账号列表对话框
+            new android.app.AlertDialog.Builder(this)
+                    .setTitle("已创建的账号列表")
+                    .setMessage(accountsList.toString())
+                    .setPositiveButton("确定", null)
+                    .show();
+                    
+        } catch (Exception e) {
+            Log.e(TAG, "读取账号列表失败", e);
+            Toast.makeText(this, "读取账号列表失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void showCurrentAccountInfo() {
         String username = usernameInput.getText().toString().trim();
         String uuid = extractUUIDFromDisplay();
@@ -393,27 +460,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private String extractUUIDFromDisplay() {
-        String uuidText = uuidDisplay.getText().toString();
-        if (uuidText.startsWith("UUID: ")) {
-            return uuidText.substring(6); // 去掉 "UUID: " 前缀
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Android 11 及以上版本
+            if (!Environment.isExternalStorageManager()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+                }
+            }
+        } else {
+            // Android 11 以下版本
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    requestPermissions(new String[]{
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    }, PERMISSION_REQUEST_CODE);
+                }
+            }
         }
-        return null;
     }
 
-    private String readFileToString(File file) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new java.io.FileInputStream(file)));
-        String line;
-        
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
-        }
-        
-        reader.close();
-        return sb.toString().trim();
-    }
-    
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

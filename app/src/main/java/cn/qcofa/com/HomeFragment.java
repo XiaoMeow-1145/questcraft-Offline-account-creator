@@ -1,5 +1,7 @@
 package cn.qcofa.com;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,8 +22,11 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -35,6 +40,8 @@ public class HomeFragment extends Fragment {
     private TextView uuidDisplay;
     private EditText ramValueInput;
     private CheckBox legalCheck, devModsCheck, customRamCheck, demoModeCheck;
+    private Button manualInstallJreBtn;
+    private Button viewAccountsBtn;
 
     @Nullable
     @Override
@@ -67,6 +74,8 @@ public class HomeFragment extends Fragment {
         devModsCheck = view.findViewById(R.id.devModsCheck);
         customRamCheck = view.findViewById(R.id.customRamCheck);
         demoModeCheck = view.findViewById(R.id.demoModeCheck);
+        manualInstallJreBtn = view.findViewById(R.id.manualInstallJreBtn);
+        viewAccountsBtn = view.findViewById(R.id.viewAccountsBtn);
 
         // 设置用户类型选择器
         setupUserTypeSpinner();
@@ -94,6 +103,10 @@ public class HomeFragment extends Fragment {
 
         Button saveConfigBtn = view.findViewById(R.id.saveConfigBtn);
         saveConfigBtn.setOnClickListener(v -> saveConfigFiles());
+
+        manualInstallJreBtn.setOnClickListener(v -> showJreInstallationDialog());
+        
+        viewAccountsBtn.setOnClickListener(v -> showAccountsList());
         
         // 为用户名输入框添加文本变化监听器，自动触发UUID生成
         usernameInput.addTextChangedListener(new android.text.TextWatcher() {
@@ -249,6 +262,9 @@ public class HomeFragment extends Fragment {
 
             Toast.makeText(requireContext(), "账号文件创建成功: " + jsonFile.getName(), Toast.LENGTH_LONG).show();
             android.util.Log.d("QcofA", "账号文件创建成功: " + jsonFile.getAbsolutePath());
+            
+            // 同时更新launcher.conf文件，将新创建的账号添加到配置文件中
+            updateLauncherConf(username, uuid);
 
         } catch (Exception e) {
             android.util.Log.e("QcofA", "创建账号文件失败", e);
@@ -351,6 +367,120 @@ public class HomeFragment extends Fragment {
         if (!username.isEmpty() && !uuid.isEmpty()) {
             usernameInput.setText(username);
             uuidDisplay.setText("UUID: " + uuid);
+        }
+    }
+    
+    private void showJreInstallationDialog() {
+        // 创建带有三个按钮的对话框
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        builder.setTitle("手动安装JRE Runtime");
+        builder.setMessage("当您启动游戏过程中无法正常下载和安装JRE提供了两个选项可以给您手动下载和安装JRE");
+
+        // 添加"手动下载安装"按钮
+        builder.setPositiveButton("手动下载安装", (dialog, which) -> openJreDownloadPage());
+        
+        // 添加"本地导出JRE"按钮
+        builder.setNeutralButton("本地导出JRE", (dialog, which) -> exportJreToPrivateDirectory());
+        
+        // 添加"取消"按钮
+        builder.setNegativeButton("取消", null);
+        
+        builder.show();
+    }
+    
+    private void openJreDownloadPage() {
+        try {
+            // 打开浏览器跳转到JRE下载页面
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/QuestCraftPlusPlus/android-openjdk-build-multiarch/releases/tag/jre22-6.0.0"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // 需要添加此标志，否则在Fragment中可能会出错
+            requireContext().startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "无法打开浏览器: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+    
+    private void showAccountsList() {
+        try {
+            // 读取launcher.conf文件
+            File storageDir = new File(requireContext().getExternalFilesDir(null), "questcraft_accounts");
+            File confFile = new File(storageDir, "launcher.conf");
+            
+            if (!confFile.exists()) {
+                Toast.makeText(requireContext(), "暂无已创建的账号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            String content = readFileToString(confFile);
+            JSONObject confJson = new JSONObject(content);
+            
+            if (!confJson.has("accounts")) {
+                Toast.makeText(requireContext(), "暂无已创建的账号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            JSONArray accountsArray = confJson.getJSONArray("accounts");
+            
+            if (accountsArray.length() == 0) {
+                Toast.makeText(requireContext(), "暂无已创建的账号", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            // 创建账号列表字符串
+            StringBuilder accountsList = new StringBuilder("已创建的账号列表:\n\n");
+            for (int i = 0; i < accountsArray.length(); i++) {
+                JSONObject account = accountsArray.getJSONObject(i);
+                String username = account.getString("username");
+                String uuid = account.getString("uuid");
+                accountsList.append("用户名: ").append(username).append("\n");
+                accountsList.append("UUID: ").append(uuid).append("\n\n");
+            }
+            
+            // 显示账号列表对话框
+            new android.app.AlertDialog.Builder(requireContext())
+                    .setTitle("已创建的账号列表")
+                    .setMessage(accountsList.toString())
+                    .setPositiveButton("确定", null)
+                    .show();
+                    
+        } catch (Exception e) {
+            android.util.Log.e("QcofA", "读取账号列表失败", e);
+            Toast.makeText(requireContext(), "读取账号列表失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+    
+private void exportJreToPrivateDirectory() {
+        try {
+            // 获取应用外部私有目录 (/storage/emulated/0/Android/data/cn.qcofa.com/files/)
+            File privateDir = requireContext().getExternalFilesDir("jre_runtime");
+            if (privateDir == null) {
+                // 如果外部存储不可用，则使用内部存储
+                privateDir = new File(requireContext().getFilesDir(), "jre_runtime");
+            }
+            
+            if (!privateDir.exists()) {
+                privateDir.mkdirs();
+            }
+
+            // 定义目标文件路径
+            File jreZipFile = new File(privateDir, "JRE.zip");
+
+            // 从assets中读取JRE.zip并写入私有目录
+            InputStream inputStream = requireContext().getAssets().open("JRE.zip");
+            FileOutputStream outputStream = new FileOutputStream(jreZipFile);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            Toast.makeText(requireContext(), "JRE已成功导出到目录: " + jreZipFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            android.util.Log.e("QcofA", "导出JRE失败", e);
+            Toast.makeText(requireContext(), "导出JRE失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
     

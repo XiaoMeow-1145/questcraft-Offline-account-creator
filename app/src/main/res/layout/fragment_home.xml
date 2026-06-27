@@ -68,7 +68,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="创建账号文件"
-            android:layout_marginBottom="30dp" />
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/viewAccountsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="查看已创建账号列表"
+            android:layout_marginBottom="20dp" />
 
         <!-- 第二个模块：简单配置 -->
         <TextView
@@ -127,6 +134,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="保存配置文件"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/manualInstallJreBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="手动安装JRE Runtime"
             android:layout_marginBottom="20dp" />
 
     </LinearLayout>
