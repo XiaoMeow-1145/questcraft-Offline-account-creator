@@ -9,9 +9,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -107,6 +111,22 @@ public class HomeFragment extends Fragment {
         manualInstallJreBtn.setOnClickListener(v -> showJreInstallationDialog());
         
         viewAccountsBtn.setOnClickListener(v -> showAccountsList());
+
+        // 设置折叠/展开功能的点击事件
+        LinearLayout expandableSectionHeader = view.findViewById(R.id.expandableSectionHeader);
+        TextView expandIndicator = view.findViewById(R.id.expandIndicator);
+        LinearLayout expandableSection = view.findViewById(R.id.expandableSection);
+        
+        expandableSectionHeader.setOnClickListener(v -> {
+            boolean isExpanded = expandableSection.getVisibility() == View.VISIBLE;
+            if (isExpanded) {
+                expandableSection.setVisibility(View.GONE);
+                expandIndicator.setText("▶");
+            } else {
+                expandableSection.setVisibility(View.VISIBLE);
+                expandIndicator.setText("▼");
+            }
+        });
         
         // 为用户名输入框添加文本变化监听器，自动触发UUID生成
         usernameInput.addTextChangedListener(new android.text.TextWatcher() {
@@ -371,8 +391,8 @@ public class HomeFragment extends Fragment {
     }
     
     private void showJreInstallationDialog() {
-        // 创建带有三个按钮的对话框
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        // 创建带有三个按钮的对话框 - 使用Material Design
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
         builder.setTitle("手动安装JRE Runtime");
         builder.setMessage("当您启动游戏过程中无法正常下载和安装JRE提供了两个选项可以给您手动下载和安装JRE");
 
@@ -413,11 +433,6 @@ public class HomeFragment extends Fragment {
             String content = readFileToString(confFile);
             JSONObject confJson = new JSONObject(content);
             
-            if (!confJson.has("accounts")) {
-                Toast.makeText(requireContext(), "暂无已创建的账号", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            
             JSONArray accountsArray = confJson.getJSONArray("accounts");
             
             if (accountsArray.length() == 0) {
@@ -425,22 +440,97 @@ public class HomeFragment extends Fragment {
                 return;
             }
             
-            // 创建账号列表字符串
-            StringBuilder accountsList = new StringBuilder("已创建的账号列表:\n\n");
+            // 创建自定义视图的对话框
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+            builder.setTitle("已创建的账号列表");
+            
+            // 创建列表视图
+            LinearLayout listLayout = new LinearLayout(requireContext());
+            listLayout.setOrientation(LinearLayout.VERTICAL);
+            listLayout.setPadding(20, 10, 20, 10);
+            
+            // 为每个账号创建列表项
             for (int i = 0; i < accountsArray.length(); i++) {
                 JSONObject account = accountsArray.getJSONObject(i);
                 String username = account.getString("username");
                 String uuid = account.getString("uuid");
-                accountsList.append("用户名: ").append(username).append("\n");
-                accountsList.append("UUID: ").append(uuid).append("\n\n");
+                
+                // 创建账号项视图
+                View accountItemView = LayoutInflater.from(requireContext()).inflate(R.layout.account_list_item, null);
+                
+                // 设置账号信息
+                TextView usernameView = accountItemView.findViewById(R.id.accountUsername);
+                TextView uuidView = accountItemView.findViewById(R.id.accountUuid);
+                TextView accountTypeLabel = accountItemView.findViewById(R.id.accountTypeLabel);
+                
+                usernameView.setText("用户名: " + username);
+                uuidView.setText("UUID: " + uuid);
+                
+                // 获取账户类型，如果没有则默认为离线账户
+                String accountType = "offline";
+                if (account.has("accountType")) {
+                    accountType = account.getString("accountType");
+                }
+                
+                // 根据账户类型设置标签
+                if ("premium".equals(accountType)) {
+                    accountTypeLabel.setText("正版账户");
+                    accountTypeLabel.setBackgroundTintList(getResources().getColorStateList(R.color.state_success));
+                } else {
+                    accountTypeLabel.setText("离线账户");
+                    accountTypeLabel.setBackgroundTintList(getResources().getColorStateList(R.color.state_info));
+                }
+                
+                // 设置标签点击事件
+                final int accountIndex = i;
+                final String currentAccountType = accountType; // 创建final副本
+                accountTypeLabel.setOnClickListener(v -> {
+                    try {
+                        // 切换账户类型
+                        String newAccountType = "offline".equals(currentAccountType) ? "premium" : "offline";
+                        
+                        // 更新JSON中的账户类型
+                        accountsArray.getJSONObject(accountIndex).put("accountType", newAccountType);
+                        
+                        // 保存更新后的JSON到文件
+                        confJson.put("accounts", accountsArray);
+                        writeStringToFile(confFile, confJson.toString(2));
+                        
+                        // 更新标签显示
+                        if ("premium".equals(newAccountType)) {
+                            accountTypeLabel.setText("正版账户");
+                            accountTypeLabel.setBackgroundTintList(getResources().getColorStateList(R.color.state_success));
+                        } else {
+                            accountTypeLabel.setText("离线账户");
+                            accountTypeLabel.setBackgroundTintList(getResources().getColorStateList(R.color.state_info));
+                        }
+                        
+                        Toast.makeText(requireContext(), "账户类型已更新", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        android.util.Log.e("QcofA", "更新账户类型失败", e);
+                        Toast.makeText(requireContext(), "更新失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                
+                listLayout.addView(accountItemView);
+                
+                // 添加分隔线（除了最后一个）
+                if (i < accountsArray.length() - 1) {
+                    View divider = new View(requireContext());
+                    divider.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 1));
+                    divider.setBackgroundColor(getResources().getColor(R.color.outline_variant));
+                    listLayout.addView(divider);
+                }
             }
             
-            // 显示账号列表对话框
-            new android.app.AlertDialog.Builder(requireContext())
-                    .setTitle("已创建的账号列表")
-                    .setMessage(accountsList.toString())
-                    .setPositiveButton("确定", null)
-                    .show();
+            // 创建ScrollView包装列表
+            ScrollView scrollView = new ScrollView(requireContext());
+            scrollView.addView(listLayout);
+            
+            builder.setView(scrollView);
+            builder.setPositiveButton("确定", null);
+            builder.show();
                     
         } catch (Exception e) {
             android.util.Log.e("QcofA", "读取账号列表失败", e);
@@ -512,5 +602,16 @@ private void exportJreToPrivateDirectory() {
         
         reader.close();
         return sb.toString().trim();
+    }
+
+    private void writeStringToFile(File file, String content) {
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(content.getBytes("UTF-8"));
+            fos.close();
+        } catch (Exception e) {
+            android.util.Log.e("QcofA", "写入文件失败", e);
+            Toast.makeText(requireContext(), "保存失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
