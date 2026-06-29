@@ -1,4 +1,5 @@
 # questcraft-Offline-account-creator 
+  (本软件为AI生成，这里所有的代码可公开使用可二次开发)
 用于在QuestCraft中创建离线账号，为那些没有马内购买正版的玩家提供离线账号的工具
  ![](/qcofa.png)
 
@@ -18,7 +19,7 @@
 理论上任何安卓设备都可以使用这种方法
 
 ## 如何实现
-实现原理是修改 Android 目录中的 DemoMode 账户，从 [/data/user/0/com.qcxr.qcxr/files/accounts] 获取此文件（需要 Android root 权限）。用户名可以是任意名称，但 UUID 可能需要特定值，将 DemoMode 改为 false 修改内容：
+实现原理是修改 Android 目录中的 DemoMode 账户，从 [/data/user/0/com.qcxr.qcxr/files/accounts] 获取此文件（需要 Android root 权限）用户名可以是任意名称，但 UUID 可能需要特定值，将 DemoMode 改为 false 修改内容：
 ```bash
 "isDemoMode": false,
 "username": ""
@@ -59,5 +60,5 @@ launcher.conf 导入
 /storage/emulated/0/Android/data/com.qcxr.qcxr/files/
 ```
 
-如果你之前已经安装过任何版本的《Minecraft》，那么可以直接在断开网络连接的情况下启动游戏（如果你想在线或联机玩耍，之后可以重新连接网络）。如果你从未安装过任何版本，请先连接到互联网，然后再安装相应版本的游戏
+如果你之前已经安装过任何版本，那么可以直接在断开网络连接的情况下启动游戏（如果你想在线或联机玩耍，之后可以重新连接网络）。如果你从未安装过任何版本，请先连接到互联网，然后再安装相应版本的游戏
 
