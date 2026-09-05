@@ -47,6 +47,7 @@ public class HomeFragment extends Fragment {
     private Button manualInstallJreBtn;
     private Button viewAccountsBtn;
     private Button saveVersionListBtn;
+    private Button skinChangeBtn;
 
     @Nullable
     @Override
@@ -82,6 +83,7 @@ public class HomeFragment extends Fragment {
         manualInstallJreBtn = view.findViewById(R.id.manualInstallJreBtn);
         viewAccountsBtn = view.findViewById(R.id.viewAccountsBtn);
         saveVersionListBtn = view.findViewById(R.id.saveVersionListBtn);
+        skinChangeBtn = view.findViewById(R.id.skinChangeBtn);
 
         // 设置用户类型选择器
         setupUserTypeSpinner();
@@ -115,6 +117,8 @@ public class HomeFragment extends Fragment {
         viewAccountsBtn.setOnClickListener(v -> showAccountsList());
 
         saveVersionListBtn.setOnClickListener(v -> saveVersionListToStorage());
+
+        skinChangeBtn.setOnClickListener(v -> showSkinChangeDialog());
 
         // 设置折叠/展开功能的点击事件
         LinearLayout expandableSectionHeader = view.findViewById(R.id.expandableSectionHeader);
@@ -613,6 +617,38 @@ private void exportJreToPrivateDirectory() {
         } catch (IOException e) {
             android.util.Log.e("QcofA", "保存版本列表失败", e);
             Toast.makeText(requireContext(), "保存版本列表失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showSkinChangeDialog() {
+        try {
+            // 从assets读取版本列表
+            InputStream inputStream = requireContext().getAssets().open("supportedVersions.json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            reader.close();
+
+            JSONObject json = new JSONObject(sb.toString());
+            JSONArray versions = json.getJSONArray("supportedVersions");
+
+            StringBuilder versionList = new StringBuilder();
+            for (int i = 0; i < versions.length(); i++) {
+                versionList.append(versions.getString(i)).append("\n");
+            }
+
+            // 显示弹窗
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+            builder.setTitle("当前支持更换皮肤的版本");
+            builder.setMessage(versionList.toString().trim());
+            builder.setPositiveButton("确定", null);
+            builder.show();
+        } catch (Exception e) {
+            android.util.Log.e("QcofA", "读取版本列表失败", e);
+            Toast.makeText(requireContext(), "读取版本列表失败", Toast.LENGTH_SHORT).show();
         }
     }
 

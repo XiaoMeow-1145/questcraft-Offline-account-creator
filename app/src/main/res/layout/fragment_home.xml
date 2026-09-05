@@ -166,6 +166,17 @@
                     app:backgroundTint="@color/surface_container_high"
                     android:textColor="@color/on_surface" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/skinChangeBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="皮肤更换"
+                    style="@style/Widget.QcofA.Button"
+                    app:backgroundTint="@color/surface_container_high"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginTop="8dp" />
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
