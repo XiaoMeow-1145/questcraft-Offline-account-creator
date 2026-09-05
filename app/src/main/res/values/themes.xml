@@ -33,7 +33,7 @@
         <item name="textInputStyle">@style/Widget.QcofA.TextInputLayout</item>
     </style>
 
-    <!-- Miuix主题 -->
+    <!-- 【新增 v1.4】Miuix主题 - 橙色系 -->
     <style name="Theme.QcofA.Miuix" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- 主色调 - Miuix风格的橙色系 -->
         <item name="colorPrimary">@color/miuix_primary</item>
@@ -90,7 +90,7 @@
         <item name="android:textColor">@color/on_surface</item>
     </style>
 
-    <!-- Miuix按钮样式 - 胶囊风格 -->
+    <!-- 【新增 v1.4】Miuix按钮样式 - 胶囊风格 -->
     <style name="Widget.QcofA.MiuixButton" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">@color/miuix_primary</item>
         <item name="android:textColor">@color/white</item>
@@ -100,7 +100,7 @@
         <item name="android:textStyle">bold</item>
     </style>
 
-    <!-- Miuix文本输入框样式 -->
+    <!-- 【新增 v1.4】Miuix文本输入框样式 -->
     <style name="Widget.QcofA.MiuixTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxCornerRadiusBottomEnd">16dp</item>
         <item name="boxCornerRadiusBottomStart">16dp</item>
@@ -159,7 +159,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
 
-    <!-- Miuix颜色定义 - 橙色系 -->
+    <!-- 【新增 v1.4】Miuix颜色定义 - 橙色系 -->
     <color name="miuix_primary">#FF6B35</color>
     <color name="miuix_primary_dark">#E55A2B</color>
     <color name="miuix_primary_container">#FFF0E8</color>

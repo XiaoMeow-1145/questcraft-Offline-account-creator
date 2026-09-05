@@ -143,7 +143,8 @@
                         android:padding="12dp"
                         android:typeface="monospace" />
 
-                    <!-- 界面风格选择 -->
+                    <!-- 【新增 v1.4】界面风格选择：Material / Miuix 切换 -->
+                    <!-- 用户选择后保存到 SharedPreferences，调用 recreate() 应用新主题 -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -211,7 +212,7 @@
                     android:textColor="@color/on_surface"
                     android:layout_marginBottom="16dp" />
 
-                <!-- 配置选项 - 使用SwitchMaterial左右滑槽样式 -->
+                <!-- 【修改 v1.4】将 CheckBox 替换为 SwitchMaterial 左右滑槽样式 -->
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/legalCheck"
                     android:layout_width="match_parent"
@@ -282,7 +283,9 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- 第三个卡片：其他选项 -->
+        <!-- 【新增 v1.4】第三个卡片：其他选项 - 集中放置新功能按钮 -->
+        <!-- 皮肤更换：点击弹出卡片式版本列表，右侧带下载图标（仅UI展示） -->
+        <!-- 保存版本列表：将 supportedVersions.json 导出到 QCOFA.COM 目录 -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -33,7 +33,7 @@
         <item name="textInputStyle">@style/Widget.QcofA.TextInputLayout</item>
     </style>
 
-    <!-- Miuix暗黑主题 -->
+    <!-- 【新增 v1.4】Miuix暗黑主题 -->
     <style name="Theme.QcofA.Miuix" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/miuix_primary</item>
         <item name="colorPrimaryVariant">@color/miuix_primary_dark</item>
@@ -127,7 +127,7 @@
     <!-- 基础颜色 -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
-<!-- Miuix暗黑模式颜色 -->
+<!-- 【新增 v1.4】Miuix暗黑模式颜色 -->
     <color name="miuix_primary">#FF8F5E</color>
     <color name="miuix_primary_dark">#E55A2B</color>
     <color name="miuix_dark_secondary">#FFB58A</color>

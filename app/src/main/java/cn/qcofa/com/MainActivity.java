@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+// 【修改 v1.4】SwitchMaterial 替代 CheckBox 实现左右滑槽开关样式
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -52,16 +53,19 @@ public class MainActivity extends AppCompatActivity {
     private Spinner userTypeSpinner;
     private TextView uuidDisplay;
     private EditText ramValueInput;
+    // 【修改 v1.4】SwitchMaterial 替代之前的 CheckBox
     private SwitchMaterial legalCheck, devModsCheck, customRamCheck, demoModeCheck;
     private Button manualInstallJreBtn;
     private Button viewAccountsBtn;
+    // 【新增 v1.4】皮肤更换、保存版本列表按钮
     private Button skinChangeBtn;
     private Button saveVersionListBtn;
+    // 【新增 v1.4】界面风格选择器（Material / Miuix）
     private Spinner themeStyleSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // 在setContentView之前应用保存的主题风格
+        // 【新增 v1.4】在 setContentView 之前应用保存的主题风格（Material / Miuix）
         applyThemeStyle();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -79,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         setupClickListeners();
     }
 
+    // 【新增 v1.4】从 SharedPreferences 读取保存的主题风格并应用
+    // 在 setTheme() 必须在 super.onCreate() 之前调用才能生效
     private void applyThemeStyle() {
         SharedPreferences prefs = getSharedPreferences("theme_style", MODE_PRIVATE);
         String style = prefs.getString("style", "Material");
@@ -89,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 【新增 v1.4】获取存储目录：优先使用根目录 QCOFA.COM（兼容 Pico 等 VR 设备）
+    // 若创建失败则回退到应用私有目录
     private File getStorageDir() {
         // 使用公共存储根目录下的 QCOFA.COM 文件夹，兼容 Pico 等 VR 设备
         File storageDir = new File(Environment.getExternalStorageDirectory(), "QCOFA.COM");
@@ -119,12 +127,13 @@ public class MainActivity extends AppCompatActivity {
         viewAccountsBtn = findViewById(R.id.viewAccountsBtn);
         skinChangeBtn = findViewById(R.id.skinChangeBtn);
         saveVersionListBtn = findViewById(R.id.saveVersionListBtn);
+        // 【新增 v1.4】界面风格 Spinner 绑定
         themeStyleSpinner = findViewById(R.id.themeStyleSpinner);
 
         // 设置用户类型选择器
         setupUserTypeSpinner();
 
-        // 设置界面风格选择器
+        // 【新增 v1.4】设置界面风格选择器
         setupThemeStyleSpinner();
 
         // 设置默认值
@@ -141,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
         userTypeSpinner.setAdapter(adapter);
     }
 
+    // 【新增 v1.4】初始化界面风格选择器（Material / Miuix）
+    // 选择后保存到 SharedPreferences，触发 recreate() 刷新界面
     private void setupThemeStyleSpinner() {
         android.widget.ArrayAdapter<CharSequence> adapter = android.widget.ArrayAdapter.createFromResource(
                 this,
@@ -187,8 +198,10 @@ public class MainActivity extends AppCompatActivity {
         
         viewAccountsBtn.setOnClickListener(v -> showAccountsList());
 
+        // 【新增 v1.4】皮肤更换按钮：弹出卡片式版本列表，右侧带下载图标
         skinChangeBtn.setOnClickListener(v -> showSkinChangeDialog());
 
+        // 【新增 v1.4】保存版本列表按钮：将 supportedVersions.json 导出到存储目录
         saveVersionListBtn.setOnClickListener(v -> saveVersionListToStorage());
 
         // 设置折叠/展开功能的点击事件
@@ -634,6 +647,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 【新增 v1.4】权限请求：Android 11+ 使用 MANAGE_EXTERNAL_STORAGE 跳转系统设置
+    // Android 6-10 使用常规 WRITE_EXTERNAL_STORAGE / READ_EXTERNAL_STORAGE
     private void requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // Android 11 及以上版本：需要 MANAGE_EXTERNAL_STORAGE 特殊权限
@@ -702,6 +717,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 【新增 v1.4】皮肤更换对话框：从 assets/supportedVersions.json 读取版本列表
+    // 以卡片式布局展示，每行左侧版本号 + 右侧下载图标（仅UI展示，不做功能）
     private void showSkinChangeDialog() {
         try {
             InputStream inputStream = getAssets().open("supportedVersions.json");
@@ -781,6 +798,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 【新增 v1.4】保存版本列表：将 assets/supportedVersions.json 复制到 QCOFA.COM 目录
+    // 用于在没有网络时手动提供版本列表文件
     private void saveVersionListToStorage() {
         try {
             File storageDir = getStorageDir();

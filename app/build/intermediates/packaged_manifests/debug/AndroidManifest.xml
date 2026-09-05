@@ -18,8 +18,7 @@
         android:name="cn.qcofa.com.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="cn.qcofa.com.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-
+    <uses-permission android:name="cn.qcofa.com.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" /> <!-- 【新增 v1.4】添加 requestLegacyExternalStorage 兼容 Android 10 存储访问 -->
     <application
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
