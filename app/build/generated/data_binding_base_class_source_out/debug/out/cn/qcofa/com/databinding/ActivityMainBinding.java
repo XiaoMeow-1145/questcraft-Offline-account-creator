@@ -14,7 +14,7 @@ import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import cn.qcofa.com.R;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.checkbox.MaterialCheckBox;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import java.lang.NullPointerException;
 import java.lang.Override;
@@ -28,16 +28,16 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton createAccountBtn;
 
   @NonNull
-  public final MaterialCheckBox customRamCheck;
+  public final SwitchMaterial customRamCheck;
 
   @NonNull
   public final TextInputEditText customUuidInput;
 
   @NonNull
-  public final MaterialCheckBox demoModeCheck;
+  public final SwitchMaterial demoModeCheck;
 
   @NonNull
-  public final MaterialCheckBox devModsCheck;
+  public final SwitchMaterial devModsCheck;
 
   @NonNull
   public final TextView expandIndicator;
@@ -49,7 +49,7 @@ public final class ActivityMainBinding implements ViewBinding {
   public final LinearLayout expandableSectionHeader;
 
   @NonNull
-  public final MaterialCheckBox legalCheck;
+  public final SwitchMaterial legalCheck;
 
   @NonNull
   public final MaterialButton manualInstallJreBtn;
@@ -59,6 +59,15 @@ public final class ActivityMainBinding implements ViewBinding {
 
   @NonNull
   public final MaterialButton saveConfigBtn;
+
+  @NonNull
+  public final MaterialButton saveVersionListBtn;
+
+  @NonNull
+  public final MaterialButton skinChangeBtn;
+
+  @NonNull
+  public final Spinner themeStyleSpinner;
 
   @NonNull
   public final Spinner userTypeSpinner;
@@ -73,14 +82,16 @@ public final class ActivityMainBinding implements ViewBinding {
   public final MaterialButton viewAccountsBtn;
 
   private ActivityMainBinding(@NonNull ScrollView rootView,
-      @NonNull MaterialButton createAccountBtn, @NonNull MaterialCheckBox customRamCheck,
-      @NonNull TextInputEditText customUuidInput, @NonNull MaterialCheckBox demoModeCheck,
-      @NonNull MaterialCheckBox devModsCheck, @NonNull TextView expandIndicator,
+      @NonNull MaterialButton createAccountBtn, @NonNull SwitchMaterial customRamCheck,
+      @NonNull TextInputEditText customUuidInput, @NonNull SwitchMaterial demoModeCheck,
+      @NonNull SwitchMaterial devModsCheck, @NonNull TextView expandIndicator,
       @NonNull LinearLayout expandableSection, @NonNull LinearLayout expandableSectionHeader,
-      @NonNull MaterialCheckBox legalCheck, @NonNull MaterialButton manualInstallJreBtn,
+      @NonNull SwitchMaterial legalCheck, @NonNull MaterialButton manualInstallJreBtn,
       @NonNull TextInputEditText ramValueInput, @NonNull MaterialButton saveConfigBtn,
-      @NonNull Spinner userTypeSpinner, @NonNull TextInputEditText usernameInput,
-      @NonNull TextView uuidDisplay, @NonNull MaterialButton viewAccountsBtn) {
+      @NonNull MaterialButton saveVersionListBtn, @NonNull MaterialButton skinChangeBtn,
+      @NonNull Spinner themeStyleSpinner, @NonNull Spinner userTypeSpinner,
+      @NonNull TextInputEditText usernameInput, @NonNull TextView uuidDisplay,
+      @NonNull MaterialButton viewAccountsBtn) {
     this.rootView = rootView;
     this.createAccountBtn = createAccountBtn;
     this.customRamCheck = customRamCheck;
@@ -94,6 +105,9 @@ public final class ActivityMainBinding implements ViewBinding {
     this.manualInstallJreBtn = manualInstallJreBtn;
     this.ramValueInput = ramValueInput;
     this.saveConfigBtn = saveConfigBtn;
+    this.saveVersionListBtn = saveVersionListBtn;
+    this.skinChangeBtn = skinChangeBtn;
+    this.themeStyleSpinner = themeStyleSpinner;
     this.userTypeSpinner = userTypeSpinner;
     this.usernameInput = usernameInput;
     this.uuidDisplay = uuidDisplay;
@@ -134,7 +148,7 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       id = R.id.customRamCheck;
-      MaterialCheckBox customRamCheck = ViewBindings.findChildViewById(rootView, id);
+      SwitchMaterial customRamCheck = ViewBindings.findChildViewById(rootView, id);
       if (customRamCheck == null) {
         break missingId;
       }
@@ -146,13 +160,13 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       id = R.id.demoModeCheck;
-      MaterialCheckBox demoModeCheck = ViewBindings.findChildViewById(rootView, id);
+      SwitchMaterial demoModeCheck = ViewBindings.findChildViewById(rootView, id);
       if (demoModeCheck == null) {
         break missingId;
       }
 
       id = R.id.devModsCheck;
-      MaterialCheckBox devModsCheck = ViewBindings.findChildViewById(rootView, id);
+      SwitchMaterial devModsCheck = ViewBindings.findChildViewById(rootView, id);
       if (devModsCheck == null) {
         break missingId;
       }
@@ -176,7 +190,7 @@ public final class ActivityMainBinding implements ViewBinding {
       }
 
       id = R.id.legalCheck;
-      MaterialCheckBox legalCheck = ViewBindings.findChildViewById(rootView, id);
+      SwitchMaterial legalCheck = ViewBindings.findChildViewById(rootView, id);
       if (legalCheck == null) {
         break missingId;
       }
@@ -196,6 +210,24 @@ public final class ActivityMainBinding implements ViewBinding {
       id = R.id.saveConfigBtn;
       MaterialButton saveConfigBtn = ViewBindings.findChildViewById(rootView, id);
       if (saveConfigBtn == null) {
+        break missingId;
+      }
+
+      id = R.id.saveVersionListBtn;
+      MaterialButton saveVersionListBtn = ViewBindings.findChildViewById(rootView, id);
+      if (saveVersionListBtn == null) {
+        break missingId;
+      }
+
+      id = R.id.skinChangeBtn;
+      MaterialButton skinChangeBtn = ViewBindings.findChildViewById(rootView, id);
+      if (skinChangeBtn == null) {
+        break missingId;
+      }
+
+      id = R.id.themeStyleSpinner;
+      Spinner themeStyleSpinner = ViewBindings.findChildViewById(rootView, id);
+      if (themeStyleSpinner == null) {
         break missingId;
       }
 
@@ -226,7 +258,8 @@ public final class ActivityMainBinding implements ViewBinding {
       return new ActivityMainBinding((ScrollView) rootView, createAccountBtn, customRamCheck,
           customUuidInput, demoModeCheck, devModsCheck, expandIndicator, expandableSection,
           expandableSectionHeader, legalCheck, manualInstallJreBtn, ramValueInput, saveConfigBtn,
-          userTypeSpinner, usernameInput, uuidDisplay, viewAccountsBtn);
+          saveVersionListBtn, skinChangeBtn, themeStyleSpinner, userTypeSpinner, usernameInput,
+          uuidDisplay, viewAccountsBtn);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

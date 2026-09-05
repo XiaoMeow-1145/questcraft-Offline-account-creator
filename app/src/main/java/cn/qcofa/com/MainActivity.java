@@ -16,13 +16,14 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -51,9 +52,12 @@ public class MainActivity extends AppCompatActivity {
     private Spinner userTypeSpinner;
     private TextView uuidDisplay;
     private EditText ramValueInput;
-    private CheckBox legalCheck, devModsCheck, customRamCheck, demoModeCheck;
+    private SwitchMaterial legalCheck, devModsCheck, customRamCheck, demoModeCheck;
     private Button manualInstallJreBtn;
     private Button viewAccountsBtn;
+    private Button skinChangeBtn;
+    private Button saveVersionListBtn;
+    private Spinner themeStyleSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,9 +117,15 @@ public class MainActivity extends AppCompatActivity {
         demoModeCheck = findViewById(R.id.demoModeCheck);
         manualInstallJreBtn = findViewById(R.id.manualInstallJreBtn);
         viewAccountsBtn = findViewById(R.id.viewAccountsBtn);
+        skinChangeBtn = findViewById(R.id.skinChangeBtn);
+        saveVersionListBtn = findViewById(R.id.saveVersionListBtn);
+        themeStyleSpinner = findViewById(R.id.themeStyleSpinner);
 
         // 设置用户类型选择器
         setupUserTypeSpinner();
+
+        // 设置界面风格选择器
+        setupThemeStyleSpinner();
 
         // 设置默认值
         ramValueInput.setText("2048");
@@ -131,6 +141,41 @@ public class MainActivity extends AppCompatActivity {
         userTypeSpinner.setAdapter(adapter);
     }
 
+    private void setupThemeStyleSpinner() {
+        android.widget.ArrayAdapter<CharSequence> adapter = android.widget.ArrayAdapter.createFromResource(
+                this,
+                R.array.theme_styles_array,
+                android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        themeStyleSpinner.setAdapter(adapter);
+
+        // 读取保存的主题风格并设置选中项
+        String savedStyle = getSharedPreferences("theme_style", MODE_PRIVATE)
+                .getString("style", "Material");
+        int selection = savedStyle.equals("Miuix") ? 1 : 0;
+        themeStyleSpinner.setSelection(selection);
+
+        // 监听选择变化，切换主题
+        themeStyleSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
+                String selectedStyle = parent.getItemAtPosition(position).toString();
+                String currentStyle = getSharedPreferences("theme_style", MODE_PRIVATE)
+                        .getString("style", "Material");
+                if (!selectedStyle.equals(currentStyle)) {
+                    getSharedPreferences("theme_style", MODE_PRIVATE)
+                            .edit()
+                            .putString("style", selectedStyle)
+                            .apply();
+                    recreate();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+    }
+
     private void setupClickListeners() {
         Button createAccountBtn = findViewById(R.id.createAccountBtn);
         createAccountBtn.setOnClickListener(v -> createAccountFile());
@@ -141,6 +186,10 @@ public class MainActivity extends AppCompatActivity {
         manualInstallJreBtn.setOnClickListener(v -> showJreInstallationDialog());
         
         viewAccountsBtn.setOnClickListener(v -> showAccountsList());
+
+        skinChangeBtn.setOnClickListener(v -> showSkinChangeDialog());
+
+        saveVersionListBtn.setOnClickListener(v -> saveVersionListToStorage());
 
         // 设置折叠/展开功能的点击事件
         LinearLayout expandableSectionHeader = findViewById(R.id.expandableSectionHeader);
@@ -650,6 +699,63 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, "写入文件失败", e);
             Toast.makeText(this, "保存失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showSkinChangeDialog() {
+        try {
+            InputStream inputStream = getAssets().open("supportedVersions.json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            reader.close();
+
+            org.json.JSONObject json = new org.json.JSONObject(sb.toString());
+            org.json.JSONArray versions = json.getJSONArray("supportedVersions");
+
+            StringBuilder versionList = new StringBuilder();
+            for (int i = 0; i < versions.length(); i++) {
+                versionList.append(versions.getString(i)).append("\n");
+            }
+
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            builder.setTitle("当前支持更换皮肤的版本");
+            builder.setMessage(versionList.toString().trim());
+            builder.setPositiveButton("确定", null);
+            builder.show();
+        } catch (Exception e) {
+            Log.e("QcofA", "读取版本列表失败", e);
+            Toast.makeText(this, "读取版本列表失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void saveVersionListToStorage() {
+        try {
+            File storageDir = getStorageDir();
+            if (!storageDir.exists()) {
+                storageDir.mkdirs();
+            }
+
+            File destFile = new File(storageDir, "supportedVersions.json");
+            InputStream inputStream = getAssets().open("supportedVersions.json");
+            FileOutputStream outputStream = new FileOutputStream(destFile);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            Toast.makeText(this, "版本列表已保存到: " + destFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            Log.e("QcofA", "保存版本列表失败", e);
+            Toast.makeText(this, "保存版本列表失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

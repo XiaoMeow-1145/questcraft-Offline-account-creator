@@ -11,8 +11,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-
-
         <!-- 第一个卡片：离线账户配置 -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -20,13 +18,13 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp"
             app:cardBackgroundColor="@color/surface_container_lowest"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
                 <!-- 卡片标题 -->
                 <TextView
@@ -136,7 +134,7 @@
                         android:id="@+id/uuidDisplay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginBottom="16dp"
                         android:text="UUID: "
                         android:textSize="14sp"
                         android:textColor="@color/on_surface"
@@ -144,6 +142,24 @@
                         android:background="@color/surface_container"
                         android:padding="12dp"
                         android:typeface="monospace" />
+
+                    <!-- 界面风格选择 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="界面风格"
+                        android:textSize="14sp"
+                        android:textColor="@color/on_surface_variant"
+                        android:layout_marginBottom="8dp" />
+
+                    <Spinner
+                        android:id="@+id/themeStyleSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@drawable/spinner_background"
+                        android:paddingStart="16dp"
+                        android:paddingEnd="16dp" />
                 </LinearLayout>
 
                 <!-- 操作按钮 -->
@@ -151,20 +167,21 @@
                     android:id="@+id/createAccountBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:text="创建账号文件"
                     style="@style/Widget.QcofA.Button"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="4dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/viewAccountsBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:text="查看已创建账号列表"
                     style="@style/Widget.QcofA.Button"
                     app:backgroundTint="@color/surface_container_high"
-                    android:textColor="@color/on_surface" />
+                    android:textColor="@color/on_surface"
+                    android:layout_marginBottom="4dp" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -176,13 +193,13 @@
             app:cardCornerRadius="12dp"
             app:cardElevation="2dp"
             app:cardBackgroundColor="@color/surface_container_lowest"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="16dp">
 
                 <!-- 卡片标题 -->
                 <TextView
@@ -194,37 +211,34 @@
                     android:textColor="@color/on_surface"
                     android:layout_marginBottom="16dp" />
 
-                <!-- 配置选项 -->
-                <com.google.android.material.checkbox.MaterialCheckBox
+                <!-- 配置选项 - 使用SwitchMaterial左右滑槽样式 -->
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/legalCheck"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="已接受法律条款 (acceptedLegal)"
                     android:checked="true"
-                    style="@style/Widget.QcofA.CheckBox"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="8dp" />
 
-                <com.google.android.material.checkbox.MaterialCheckBox
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/devModsCheck"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="启用开发者模组 (setDevMods)"
-                    style="@style/Widget.QcofA.CheckBox"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="8dp" />
 
-                <com.google.android.material.checkbox.MaterialCheckBox
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/customRamCheck"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="自定义内存 (setCustomRAM)"
-                    style="@style/Widget.QcofA.CheckBox"
-                    android:layout_marginBottom="12dp" />
+                    android:layout_marginBottom="8dp" />
 
                 <!-- 内存值输入 -->
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="8dp"
                     style="@style/Widget.QcofA.TextInputLayout"
                     app:boxBackgroundColor="@color/surface_container_low">
 
@@ -238,33 +252,92 @@
                         android:textSize="16sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.checkbox.MaterialCheckBox
+                <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/demoModeCheck"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="演示模式 (isDemoMode)"
-                    style="@style/Widget.QcofA.CheckBox"
-                    android:layout_marginBottom="20dp" />
+                    android:layout_marginBottom="12dp" />
 
                 <!-- 操作按钮 -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/saveConfigBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:text="保存配置文件"
                     style="@style/Widget.QcofA.Button"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="4dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/manualInstallJreBtn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="48dp"
+                    android:minHeight="40dp"
                     android:text="手动安装JRE Runtime"
                     style="@style/Widget.QcofA.Button"
                     app:backgroundTint="@color/surface_container_high"
                     android:textColor="@color/on_surface" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 第三个卡片：版本管理 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/surface_container_lowest"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- 卡片标题 -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="版本管理"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginBottom="16dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/skinChangeBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="皮肤更换"
+                    style="@style/Widget.QcofA.Button"
+                    app:backgroundTint="@color/surface_container_high"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginBottom="4dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/saveVersionListBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="保存版本列表"
+                    style="@style/Widget.QcofA.Button"
+                    app:backgroundTint="@color/surface_container_high"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginBottom="4dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="此选项在您没有魔法上网时下载不到版本列表时才用得到"
+                    android:textSize="12sp"
+                    android:textColor="@color/on_surface_variant"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="4dp" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
