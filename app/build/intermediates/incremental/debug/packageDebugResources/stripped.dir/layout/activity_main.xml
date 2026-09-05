@@ -282,7 +282,7 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- 第三个卡片：版本管理 -->
+        <!-- 第三个卡片：其他选项 -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -301,7 +301,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="版本管理"
+                    android:text="其他选项"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/on_surface"
@@ -326,18 +326,7 @@
                     android:text="保存版本列表"
                     style="@style/Widget.QcofA.Button"
                     app:backgroundTint="@color/surface_container_high"
-                    android:textColor="@color/on_surface"
-                    android:layout_marginBottom="4dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="此选项在您没有魔法上网时下载不到版本列表时才用得到"
-                    android:textSize="12sp"
-                    android:textColor="@color/on_surface_variant"
-                    android:gravity="center"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="4dp" />
+                    android:textColor="@color/on_surface" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

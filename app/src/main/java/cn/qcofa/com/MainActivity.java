@@ -716,15 +716,64 @@ public class MainActivity extends AppCompatActivity {
             org.json.JSONObject json = new org.json.JSONObject(sb.toString());
             org.json.JSONArray versions = json.getJSONArray("supportedVersions");
 
-            StringBuilder versionList = new StringBuilder();
+            // 创建卡片式列表
+            LinearLayout listLayout = new LinearLayout(this);
+            listLayout.setOrientation(LinearLayout.VERTICAL);
+            listLayout.setPadding(0, 8, 0, 8);
+
             for (int i = 0; i < versions.length(); i++) {
-                versionList.append(versions.getString(i)).append("\n");
+                final String version = versions.getString(i);
+
+                // 每个版本项作为一个卡片
+                android.widget.LinearLayout itemCard = new android.widget.LinearLayout(this);
+                itemCard.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+                itemCard.setPadding(16, 14, 16, 14);
+
+                // 设置卡片背景
+                android.graphics.drawable.GradientDrawable cardBg = new android.graphics.drawable.GradientDrawable();
+                cardBg.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
+                cardBg.setCornerRadius(12);
+                cardBg.setColor(getResources().getColor(R.color.surface_container));
+                cardBg.setStroke(1, getResources().getColor(R.color.outline_variant));
+                itemCard.setBackground(cardBg);
+
+                android.widget.LinearLayout.LayoutParams cardParams = new android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+                cardParams.setMargins(12, 4, 12, 4);
+                itemCard.setLayoutParams(cardParams);
+
+                // 版本名称（左侧）
+                TextView versionText = new TextView(this);
+                versionText.setText(version);
+                versionText.setTextSize(16);
+                versionText.setTextColor(getResources().getColor(R.color.on_surface));
+                versionText.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                        0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+                versionText.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+                // 下载图标（右侧）- 使用Unicode字符 ⬇
+                TextView downloadIcon = new TextView(this);
+                downloadIcon.setText("⬇");
+                downloadIcon.setTextSize(20);
+                downloadIcon.setTextColor(getResources().getColor(R.color.primary));
+                downloadIcon.setPadding(8, 0, 0, 0);
+                downloadIcon.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+                itemCard.addView(versionText);
+                itemCard.addView(downloadIcon);
+
+                listLayout.addView(itemCard);
             }
 
+            // 包装到ScrollView
+            ScrollView scrollView = new ScrollView(this);
+            scrollView.addView(listLayout);
+
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-            builder.setTitle("当前支持更换皮肤的版本");
-            builder.setMessage(versionList.toString().trim());
-            builder.setPositiveButton("确定", null);
+            builder.setTitle("选择皮肤版本");
+            builder.setView(scrollView);
+            builder.setPositiveButton("关闭", null);
             builder.show();
         } catch (Exception e) {
             Log.e("QcofA", "读取版本列表失败", e);
