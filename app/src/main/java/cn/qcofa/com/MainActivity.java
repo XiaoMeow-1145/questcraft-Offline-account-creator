@@ -84,6 +84,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private File getStorageDir() {
+        // 使用公共存储根目录下的 QCOFA.COM 文件夹，兼容 Pico 等 VR 设备
+        File storageDir = new File(Environment.getExternalStorageDirectory(), "QCOFA.COM");
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
+        return storageDir;
+    }
+
     private void initViews() {
         usernameInput = findViewById(R.id.usernameInput);
         customUuidInput = findViewById(R.id.customUuidInput);
@@ -236,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // 创建存储目录
-            File storageDir = new File(getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = getStorageDir();
             if (!storageDir.exists()) {
                 storageDir.mkdirs();
                 Log.d(TAG, "创建目录: " + storageDir.getAbsolutePath());
@@ -272,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
     private void updateLauncherConf(String username, String uuid) {
         try {
             // 创建launcher.conf文件
-            File storageDir = new File(getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = getStorageDir();
             File confFile = new File(storageDir, "launcher.conf");
 
             JSONObject confJson = new JSONObject();
@@ -411,12 +420,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void exportJreToPrivateDirectory() {
         try {
-            // 获取应用外部私有目录 (/storage/emulated/0/Android/data/cn.qcofa.com/files/)
-            File privateDir = getExternalFilesDir("jre_runtime");
-            if (privateDir == null) {
-                // 如果外部存储不可用，则使用内部存储
-                privateDir = new File(getFilesDir(), "jre_runtime");
-            }
+            // 获取应用外部存储目录 (/storage/emulated/0/QCOFA.COM/jre_runtime)
+            File privateDir = new File(getStorageDir(), "jre_runtime");
             
             if (!privateDir.exists()) {
                 privateDir.mkdirs();
@@ -448,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
     private void showAccountsList() {
         try {
             // 读取launcher.conf文件
-            File storageDir = new File(getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = getStorageDir();
             File confFile = new File(storageDir, "launcher.conf");
             
             if (!confFile.exists()) {

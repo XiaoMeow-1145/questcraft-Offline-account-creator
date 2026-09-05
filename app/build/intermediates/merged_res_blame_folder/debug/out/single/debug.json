@@ -1,0 +1,46 @@
+[
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/layout_activity_main.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/layout/activity_main.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/layout_account_list_item.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/layout/account_list_item.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/drawable_spinner_background.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/drawable/spinner_background.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/xml_data_extraction_rules.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/xml/data_extraction_rules.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/xml_backup_rules.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/xml/backup_rules.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/drawable_premium_badge_background.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/drawable/premium_badge_background.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/drawable_account_type_badge_background.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/drawable/account_type_badge_background.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-merged_res-31:/layout_fragment_home.xml.flat",
+        "source": "cn.qcofa.com.app-main-33:/layout/fragment_home.xml"
+    }
+]

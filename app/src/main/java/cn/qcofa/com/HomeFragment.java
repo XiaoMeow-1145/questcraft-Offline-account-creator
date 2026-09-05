@@ -1,8 +1,10 @@
 package cn.qcofa.com;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -309,7 +311,7 @@ public class HomeFragment extends Fragment {
 
         try {
             // 创建存储目录
-            File storageDir = new File(requireContext().getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = getStorageDir();
             if (!storageDir.exists()) {
                 storageDir.mkdirs();
                 android.util.Log.d("QcofA", "创建目录: " + storageDir.getAbsolutePath());
@@ -345,7 +347,7 @@ public class HomeFragment extends Fragment {
     private void updateLauncherConf(String username, String uuid) {
         try {
             // 创建launcher.conf文件
-            File storageDir = new File(requireContext().getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = getStorageDir();
             File confFile = new File(storageDir, "launcher.conf");
 
             JSONObject confJson = new JSONObject();
@@ -472,7 +474,7 @@ public class HomeFragment extends Fragment {
     private void showAccountsList() {
         try {
             // 读取launcher.conf文件
-            File storageDir = new File(requireContext().getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = getStorageDir();
             File confFile = new File(storageDir, "launcher.conf");
             
             if (!confFile.exists()) {
@@ -590,12 +592,8 @@ public class HomeFragment extends Fragment {
     
 private void exportJreToPrivateDirectory() {
         try {
-            // 获取应用外部私有目录 (/storage/emulated/0/Android/data/cn.qcofa.com/files/)
-            File privateDir = requireContext().getExternalFilesDir("jre_runtime");
-            if (privateDir == null) {
-                // 如果外部存储不可用，则使用内部存储
-                privateDir = new File(requireContext().getFilesDir(), "jre_runtime");
-            }
+            // 获取应用外部存储目录 (/storage/emulated/0/QCOFA.COM/jre_runtime)
+            File privateDir = new File(getStorageDir(), "jre_runtime");
             
             if (!privateDir.exists()) {
                 privateDir.mkdirs();
@@ -636,7 +634,7 @@ private void exportJreToPrivateDirectory() {
     private void saveVersionListToStorage() {
         try {
             // 获取存储目录 (与账号文件相同目录)
-            File storageDir = new File(requireContext().getExternalFilesDir(null), "questcraft_accounts");
+            File storageDir = getStorageDir();
             if (!storageDir.exists()) {
                 storageDir.mkdirs();
             }
@@ -692,6 +690,15 @@ private void exportJreToPrivateDirectory() {
             android.util.Log.e("QcofA", "读取版本列表失败", e);
             Toast.makeText(requireContext(), "读取版本列表失败", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private File getStorageDir() {
+        // 使用公共存储根目录下的 QCOFA.COM 文件夹，兼容 Pico 等 VR 设备
+        File storageDir = new File(Environment.getExternalStorageDirectory(), "QCOFA.COM");
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
+        return storageDir;
     }
 
     private String extractUUIDFromDisplay() {
