@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -88,7 +89,13 @@ public class MainActivity extends AppCompatActivity {
         // 使用公共存储根目录下的 QCOFA.COM 文件夹，兼容 Pico 等 VR 设备
         File storageDir = new File(Environment.getExternalStorageDirectory(), "QCOFA.COM");
         if (!storageDir.exists()) {
-            storageDir.mkdirs();
+            if (!storageDir.mkdirs()) {
+                // 如果创建失败（可能是权限不足），回退到应用私有目录
+                Log.w(TAG, "无法在根目录创建 QCOFA.COM 文件夹，回退到应用私有目录");
+                File fallbackDir = new File(getExternalFilesDir(null), "QCOFA.COM");
+                fallbackDir.mkdirs();
+                return fallbackDir;
+            }
         }
         return storageDir;
     }
@@ -580,21 +587,35 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            // Android 11 及以上版本
+            // Android 11 及以上版本：需要 MANAGE_EXTERNAL_STORAGE 特殊权限
             if (!Environment.isExternalStorageManager()) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(new String[]{Manifest.permission.MANAGE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-                }
+                // 打开系统设置页面让用户授予权限
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, PERMISSION_REQUEST_CODE);
             }
-        } else {
-            // Android 11 以下版本
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Android 6-10 版本：使用常规权限请求
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    requestPermissions(new String[]{
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    }, PERMISSION_REQUEST_CODE);
+                requestPermissions(new String[]{
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                }, PERMISSION_REQUEST_CODE);
+            }
+        }
+        // Android 6 以下：无需权限
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    Toast.makeText(this, "存储权限已获取", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "缺少存储权限，将无法在存储根目录创建文件", Toast.LENGTH_LONG).show();
                 }
             }
         }

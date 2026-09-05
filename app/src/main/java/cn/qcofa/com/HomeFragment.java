@@ -696,7 +696,13 @@ private void exportJreToPrivateDirectory() {
         // 使用公共存储根目录下的 QCOFA.COM 文件夹，兼容 Pico 等 VR 设备
         File storageDir = new File(Environment.getExternalStorageDirectory(), "QCOFA.COM");
         if (!storageDir.exists()) {
-            storageDir.mkdirs();
+            if (!storageDir.mkdirs()) {
+                // 如果创建失败（可能是权限不足），回退到应用私有目录
+                android.util.Log.w("QcofA", "无法在根目录创建 QCOFA.COM 文件夹，回退到应用私有目录");
+                File fallbackDir = new File(requireContext().getExternalFilesDir(null), "QCOFA.COM");
+                fallbackDir.mkdirs();
+                return fallbackDir;
+            }
         }
         return storageDir;
     }
