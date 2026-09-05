@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 在setContentView之前应用保存的主题风格
+        applyThemeStyle();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -70,6 +72,16 @@ public class MainActivity extends AppCompatActivity {
 
         // 设置按钮点击事件
         setupClickListeners();
+    }
+
+    private void applyThemeStyle() {
+        SharedPreferences prefs = getSharedPreferences("theme_style", MODE_PRIVATE);
+        String style = prefs.getString("style", "Material");
+        if ("Miuix".equals(style)) {
+            setTheme(R.style.Theme_QcofA_Miuix);
+        } else {
+            setTheme(R.style.Theme_QcofA_Material);
+        }
     }
 
     private void initViews() {

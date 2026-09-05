@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 暗黑主题 - 基于参考UI的Material Design暗黑设计系统 -->
-    <style name="Theme.QcofA" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Material暗黑主题（默认） -->
+    <style name="Theme.QcofA" parent="Theme.QcofA.Material" />
+
+    <style name="Theme.QcofA.Material" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- 主色调 -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
@@ -18,7 +20,7 @@
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/on_surface</item>
         
-        <!-- 背景颜色 - 使用android命名空间 -->
+        <!-- 背景颜色 -->
         <item name="android:colorBackground">@color/surface</item>
         <item name="android:colorForeground">@color/on_surface</item>
         
@@ -29,7 +31,26 @@
         <!-- Material Design组件样式 -->
         <item name="materialButtonStyle">@style/Widget.QcofA.Button</item>
         <item name="textInputStyle">@style/Widget.QcofA.TextInputLayout</item>
-        <item name="checkboxStyle">@style/Widget.QcofA.CheckBox</item>
+    </style>
+
+    <!-- Miuix暗黑主题 -->
+    <style name="Theme.QcofA.Miuix" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/miuix_primary</item>
+        <item name="colorPrimaryVariant">@color/miuix_primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/miuix_dark_secondary</item>
+        <item name="colorSecondaryVariant">@color/miuix_dark_secondary_container</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/miuix_dark_surface_container_highest</item>
+        <item name="android:windowBackground">@color/miuix_dark_surface</item>
+        <item name="colorSurface">@color/miuix_dark_surface</item>
+        <item name="colorOnSurface">@color/miuix_dark_on_surface</item>
+        <item name="android:colorBackground">@color/miuix_dark_surface</item>
+        <item name="android:colorForeground">@color/miuix_dark_on_surface</item>
+        <item name="colorError">@color/state_error</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="materialButtonStyle">@style/Widget.QcofA.MiuixButton</item>
+        <item name="textInputStyle">@style/Widget.QcofA.MiuixTextInputLayout</item>
     </style>
 
     <!-- 按钮样式 -->
@@ -106,4 +127,12 @@
     <!-- 基础颜色 -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
+<!-- Miuix暗黑模式颜色 -->
+    <color name="miuix_primary">#FF8F5E</color>
+    <color name="miuix_primary_dark">#E55A2B</color>
+    <color name="miuix_dark_secondary">#FFB58A</color>
+    <color name="miuix_dark_secondary_container">#4A2E1A</color>
+    <color name="miuix_dark_surface">#1C1B1F</color>
+    <color name="miuix_dark_surface_container_highest">#3A322E</color>
+    <color name="miuix_dark_on_surface">#E6E0EB</color>
 </resources>

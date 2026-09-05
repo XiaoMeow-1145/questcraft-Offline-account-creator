@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -16,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,11 +44,12 @@ public class HomeFragment extends Fragment {
     private Spinner userTypeSpinner;
     private TextView uuidDisplay;
     private EditText ramValueInput;
-    private CheckBox legalCheck, devModsCheck, customRamCheck, demoModeCheck;
+    private SwitchMaterial legalCheck, devModsCheck, customRamCheck, demoModeCheck;
     private Button manualInstallJreBtn;
     private Button viewAccountsBtn;
     private Button saveVersionListBtn;
     private Button skinChangeBtn;
+    private Spinner themeStyleSpinner;
 
     @Nullable
     @Override
@@ -84,9 +86,13 @@ public class HomeFragment extends Fragment {
         viewAccountsBtn = view.findViewById(R.id.viewAccountsBtn);
         saveVersionListBtn = view.findViewById(R.id.saveVersionListBtn);
         skinChangeBtn = view.findViewById(R.id.skinChangeBtn);
+        themeStyleSpinner = view.findViewById(R.id.themeStyleSpinner);
 
         // 设置用户类型选择器
         setupUserTypeSpinner();
+
+        // 设置界面风格选择器
+        setupThemeStyleSpinner();
 
         // 设置默认值
         ramValueInput.setText("2048");
@@ -103,6 +109,42 @@ public class HomeFragment extends Fragment {
         
         // 设置默认选中项为"msa"
         userTypeSpinner.setSelection(0);
+    }
+
+    private void setupThemeStyleSpinner() {
+        android.widget.ArrayAdapter<CharSequence> adapter = android.widget.ArrayAdapter.createFromResource(
+                requireContext(),
+                R.array.theme_styles_array,
+                android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        themeStyleSpinner.setAdapter(adapter);
+
+        // 读取保存的主题风格并设置选中项
+        String savedStyle = requireContext().getSharedPreferences("theme_style", android.content.Context.MODE_PRIVATE)
+                .getString("style", "Material");
+        int selection = savedStyle.equals("Miuix") ? 1 : 0;
+        themeStyleSpinner.setSelection(selection);
+
+        // 监听选择变化，切换主题
+        themeStyleSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
+                String selectedStyle = parent.getItemAtPosition(position).toString();
+                String currentStyle = requireContext().getSharedPreferences("theme_style", android.content.Context.MODE_PRIVATE)
+                        .getString("style", "Material");
+                if (!selectedStyle.equals(currentStyle)) {
+                    // 保存选择并重启Activity
+                    requireContext().getSharedPreferences("theme_style", android.content.Context.MODE_PRIVATE)
+                            .edit()
+                            .putString("style", selectedStyle)
+                            .apply();
+                    requireActivity().recreate();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
     }
 
     private void setupClickListeners(View view) {

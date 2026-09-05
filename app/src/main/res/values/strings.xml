@@ -6,4 +6,9 @@
         <item>msa</item>
         <item>offline</item>
     </string-array>
+
+    <string-array name="theme_styles_array">
+        <item>Material</item>
+        <item>Miuix</item>
+    </string-array>
 </resources>

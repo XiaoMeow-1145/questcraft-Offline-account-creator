@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 应用主题 - 基于参考UI的Material Design设计系统 -->
-    <style name="Theme.QcofA" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Material主题（默认） -->
+    <style name="Theme.QcofA" parent="Theme.QcofA.Material" />
+
+    <style name="Theme.QcofA.Material" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- 主色调 -->
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/primary_dark</item>
@@ -29,7 +31,37 @@
         <!-- Material Design组件样式 -->
         <item name="materialButtonStyle">@style/Widget.QcofA.Button</item>
         <item name="textInputStyle">@style/Widget.QcofA.TextInputLayout</item>
-        <item name="checkboxStyle">@style/Widget.QcofA.CheckBox</item>
+    </style>
+
+    <!-- Miuix主题 -->
+    <style name="Theme.QcofA.Miuix" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- 主色调 - Miuix风格的橙色系 -->
+        <item name="colorPrimary">@color/miuix_primary</item>
+        <item name="colorPrimaryVariant">@color/miuix_primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        
+        <!-- 辅助色调 -->
+        <item name="colorSecondary">@color/miuix_secondary</item>
+        <item name="colorSecondaryVariant">@color/miuix_secondary_container</item>
+        <item name="colorOnSecondary">@color/white</item>
+        
+        <!-- 表面颜色 -->
+        <item name="android:statusBarColor">@color/miuix_surface_container_highest</item>
+        <item name="android:windowBackground">@color/miuix_surface</item>
+        <item name="colorSurface">@color/miuix_surface</item>
+        <item name="colorOnSurface">@color/miuix_on_surface</item>
+        
+        <!-- 背景颜色 -->
+        <item name="android:colorBackground">@color/miuix_surface</item>
+        <item name="android:colorForeground">@color/miuix_on_surface</item>
+        
+        <!-- 错误颜色 -->
+        <item name="colorError">@color/state_error</item>
+        <item name="colorOnError">@color/white</item>
+        
+        <!-- Miuix组件样式 -->
+        <item name="materialButtonStyle">@style/Widget.QcofA.MiuixButton</item>
+        <item name="textInputStyle">@style/Widget.QcofA.MiuixTextInputLayout</item>
     </style>
 
     <!-- 按钮样式 -->
@@ -56,6 +88,26 @@
     <style name="Widget.QcofA.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
         <item name="buttonTint">@color/primary</item>
         <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <!-- Miuix按钮样式 - 胶囊风格 -->
+    <style name="Widget.QcofA.MiuixButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/miuix_primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">32dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Miuix文本输入框样式 -->
+    <style name="Widget.QcofA.MiuixTextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxStrokeColor">@color/miuix_outline_variant</item>
+        <item name="hintTextColor">@color/miuix_on_surface_variant</item>
     </style>
 
     <!-- 颜色定义 - 基于参考UI的设计系统 -->
@@ -106,4 +158,16 @@
     <!-- 基础颜色 -->
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
+
+    <!-- Miuix颜色定义 - 橙色系 -->
+    <color name="miuix_primary">#FF6B35</color>
+    <color name="miuix_primary_dark">#E55A2B</color>
+    <color name="miuix_primary_container">#FFF0E8</color>
+    <color name="miuix_secondary">#FF8F5E</color>
+    <color name="miuix_secondary_container">#FFF0E8</color>
+    <color name="miuix_surface">#FFF8F5</color>
+    <color name="miuix_surface_container_highest">#F5EDE8</color>
+    <color name="miuix_on_surface">#1C1B1F</color>
+    <color name="miuix_on_surface_variant">#5C5248</color>
+    <color name="miuix_outline_variant">#D9C8BC</color>
 </resources>
