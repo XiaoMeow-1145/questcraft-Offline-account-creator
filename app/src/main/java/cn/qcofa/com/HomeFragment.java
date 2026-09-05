@@ -46,6 +46,7 @@ public class HomeFragment extends Fragment {
     private CheckBox legalCheck, devModsCheck, customRamCheck, demoModeCheck;
     private Button manualInstallJreBtn;
     private Button viewAccountsBtn;
+    private Button saveVersionListBtn;
 
     @Nullable
     @Override
@@ -80,6 +81,7 @@ public class HomeFragment extends Fragment {
         demoModeCheck = view.findViewById(R.id.demoModeCheck);
         manualInstallJreBtn = view.findViewById(R.id.manualInstallJreBtn);
         viewAccountsBtn = view.findViewById(R.id.viewAccountsBtn);
+        saveVersionListBtn = view.findViewById(R.id.saveVersionListBtn);
 
         // 设置用户类型选择器
         setupUserTypeSpinner();
@@ -111,6 +113,8 @@ public class HomeFragment extends Fragment {
         manualInstallJreBtn.setOnClickListener(v -> showJreInstallationDialog());
         
         viewAccountsBtn.setOnClickListener(v -> showAccountsList());
+
+        saveVersionListBtn.setOnClickListener(v -> saveVersionListToStorage());
 
         // 设置折叠/展开功能的点击事件
         LinearLayout expandableSectionHeader = view.findViewById(R.id.expandableSectionHeader);
@@ -580,6 +584,35 @@ private void exportJreToPrivateDirectory() {
         
         if (!username.isEmpty() && !uuid.isEmpty()) {
             Toast.makeText(requireContext(), "当前账号：\n用户名: " + username + "\nUUID: " + uuid, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void saveVersionListToStorage() {
+        try {
+            // 获取存储目录 (与账号文件相同目录)
+            File storageDir = new File(requireContext().getExternalFilesDir(null), "questcraft_accounts");
+            if (!storageDir.exists()) {
+                storageDir.mkdirs();
+            }
+
+            // 从assets复制版本列表文件到外部存储
+            File destFile = new File(storageDir, "supportedVersions.json");
+            InputStream inputStream = requireContext().getAssets().open("supportedVersions.json");
+            FileOutputStream outputStream = new FileOutputStream(destFile);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            Toast.makeText(requireContext(), "版本列表已保存到: " + destFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            android.util.Log.e("QcofA", "保存版本列表失败", e);
+            Toast.makeText(requireContext(), "保存版本列表失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
