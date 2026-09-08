@@ -25,6 +25,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.ComposeActivity"
+            android:exported="true"
+            android:label="QcofA"
+            android:theme="@style/Theme.QcofA" />
+        <activity
             android:name=".ModDownloadActivity"
             android:exported="false"
             android:label="Fabric 模组下载"
