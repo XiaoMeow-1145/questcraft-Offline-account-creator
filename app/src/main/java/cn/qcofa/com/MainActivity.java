@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     // 【新增 v1.4】皮肤更换、保存版本列表按钮
     private Button skinChangeBtn;
     private Button saveVersionListBtn;
+    // 【新增 v1.5】下载核心模组按钮
+    private Button downloadModsBtn;
     // 【新增 v1.4】界面风格选择器（Material / Miuix）
     private Spinner themeStyleSpinner;
 
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
         viewAccountsBtn = findViewById(R.id.viewAccountsBtn);
         skinChangeBtn = findViewById(R.id.skinChangeBtn);
         saveVersionListBtn = findViewById(R.id.saveVersionListBtn);
+        downloadModsBtn = findViewById(R.id.downloadModsBtn);
         // 【新增 v1.4】界面风格 Spinner 绑定
         themeStyleSpinner = findViewById(R.id.themeStyleSpinner);
 
@@ -203,6 +206,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 【新增 v1.4】保存版本列表按钮：将 supportedVersions.json 导出到存储目录
         saveVersionListBtn.setOnClickListener(v -> saveVersionListToStorage());
+
+        // 【新增 v1.5】下载核心模组按钮：打开模组下载页面
+        downloadModsBtn.setOnClickListener(v -> openModDownloadActivity());
 
         // 设置折叠/展开功能的点击事件
         LinearLayout expandableSectionHeader = findViewById(R.id.expandableSectionHeader);
@@ -796,6 +802,12 @@ public class MainActivity extends AppCompatActivity {
             Log.e("QcofA", "读取版本列表失败", e);
             Toast.makeText(this, "读取版本列表失败", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // 【新增 v1.5】打开模组下载页面
+    private void openModDownloadActivity() {
+        Intent intent = new Intent(this, ModDownloadActivity.class);
+        startActivity(intent);
     }
 
     // 【新增 v1.4】保存版本列表：将 assets/supportedVersions.json 复制到 QCOFA.COM 目录

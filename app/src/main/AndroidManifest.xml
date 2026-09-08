@@ -24,6 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ModDownloadActivity"
+            android:exported="false"
+            android:label="Fabric 模组下载"
+            android:theme="@style/Theme.QcofA" />
     </application>
 
     <!-- 权限声明 -->

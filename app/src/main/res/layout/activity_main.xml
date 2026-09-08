@@ -329,6 +329,17 @@
                     android:text="保存版本列表"
                     style="@style/Widget.QcofA.Button"
                     app:backgroundTint="@color/surface_container_high"
+                    android:textColor="@color/on_surface"
+                    android:layout_marginBottom="4dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/downloadModsBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="下载核心模组"
+                    style="@style/Widget.QcofA.Button"
+                    app:backgroundTint="@color/surface_container_high"
                     android:textColor="@color/on_surface" />
 
             </LinearLayout>

@@ -51,6 +51,7 @@ public class HomeFragment extends Fragment {
     private Button viewAccountsBtn;
     private Button saveVersionListBtn;
     private Button skinChangeBtn;
+    private Button downloadModsBtn;
     private Spinner themeStyleSpinner;
 
     @Nullable
@@ -88,6 +89,7 @@ public class HomeFragment extends Fragment {
         viewAccountsBtn = view.findViewById(R.id.viewAccountsBtn);
         saveVersionListBtn = view.findViewById(R.id.saveVersionListBtn);
         skinChangeBtn = view.findViewById(R.id.skinChangeBtn);
+        downloadModsBtn = view.findViewById(R.id.downloadModsBtn);
         themeStyleSpinner = view.findViewById(R.id.themeStyleSpinner);
 
         // 设置用户类型选择器
@@ -163,6 +165,11 @@ public class HomeFragment extends Fragment {
         saveVersionListBtn.setOnClickListener(v -> saveVersionListToStorage());
 
         skinChangeBtn.setOnClickListener(v -> showSkinChangeDialog());
+
+        downloadModsBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(requireActivity(), ModDownloadActivity.class);
+            startActivity(intent);
+        });
 
         // 设置折叠/展开功能的点击事件
         LinearLayout expandableSectionHeader = view.findViewById(R.id.expandableSectionHeader);
