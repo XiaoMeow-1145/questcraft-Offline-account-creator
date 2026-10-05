@@ -41,6 +41,8 @@ import java.util.UUID;
 
 public class HomeFragment extends Fragment {
 
+    private static final int PICK_SKIN_FILE_REQUEST_CODE = 101;
+
     private EditText usernameInput;
     private EditText customUuidInput;
     private Spinner userTypeSpinner;
@@ -160,9 +162,9 @@ public class HomeFragment extends Fragment {
         
         viewAccountsBtn.setOnClickListener(v -> showAccountsList());
 
-        saveVersionListBtn.setOnClickListener(v -> saveVersionListToStorage());
+        saveVersionListBtn.setOnClickListener(v -> downloadQCOFAOfflineSkin());
 
-        skinChangeBtn.setOnClickListener(v -> showSkinChangeDialog());
+        skinChangeBtn.setOnClickListener(v -> importSkinFile());
 
         // 设置折叠/展开功能的点击事件
         LinearLayout expandableSectionHeader = view.findViewById(R.id.expandableSectionHeader);
@@ -660,35 +662,85 @@ private void exportJreToPrivateDirectory() {
         }
     }
 
-    private void showSkinChangeDialog() {
+    // 【修改 v1.5】导入皮肤文件：打开系统文件选择器选择皮肤图片
+    private void importSkinFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
         try {
-            // 从assets读取版本列表
-            InputStream inputStream = requireContext().getAssets().open("supportedVersions.json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            reader.close();
-
-            JSONObject json = new JSONObject(sb.toString());
-            JSONArray versions = json.getJSONArray("supportedVersions");
-
-            StringBuilder versionList = new StringBuilder();
-            for (int i = 0; i < versions.length(); i++) {
-                versionList.append(versions.getString(i)).append("\n");
-            }
-
-            // 显示弹窗
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
-            builder.setTitle("当前支持更换皮肤的版本");
-            builder.setMessage(versionList.toString().trim());
-            builder.setPositiveButton("确定", null);
-            builder.show();
+            startActivityForResult(Intent.createChooser(intent, "选择皮肤文件"), PICK_SKIN_FILE_REQUEST_CODE);
         } catch (Exception e) {
-            android.util.Log.e("QcofA", "读取版本列表失败", e);
-            Toast.makeText(requireContext(), "读取版本列表失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "无法打开文件选择器: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // 【修改 v1.5】下载QCOFAOfflineSkin：打开 GitHub 发布页面，同时保存版本列表
+    private void downloadQCOFAOfflineSkin() {
+        saveVersionListToStorage();
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://github.com/XiaoMeow-1145/questcraft-Offline-account-creator/releases"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            requireContext().startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), "无法打开浏览器: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // 【新增 v1.5】处理皮肤文件选择结果
+    private void handleSkinFileImport(Uri skinUri) {
+        try {
+            File storageDir = getStorageDir();
+            File skinsDir = new File(storageDir, "skins");
+            if (!skinsDir.exists()) {
+                skinsDir.mkdirs();
+            }
+
+            String fileName = "skin_" + System.currentTimeMillis() + ".png";
+            String[] projection = {android.provider.OpenableColumns.DISPLAY_NAME};
+            try (android.database.Cursor cursor = requireContext().getContentResolver().query(skinUri, projection, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex >= 0) {
+                        String originalName = cursor.getString(nameIndex);
+                        if (originalName != null && !originalName.isEmpty()) {
+                            fileName = originalName;
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+
+            File destFile = new File(skinsDir, fileName);
+            InputStream inputStream = requireContext().getContentResolver().openInputStream(skinUri);
+            if (inputStream == null) {
+                Toast.makeText(requireContext(), "无法读取选中的文件", Toast.LENGTH_LONG).show();
+                return;
+            }
+            FileOutputStream outputStream = new FileOutputStream(destFile);
+
+            byte[] buffer = new byte[4096];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            Toast.makeText(requireContext(), "皮肤文件已导入: " + destFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            android.util.Log.d("QcofA", "皮肤文件导入成功: " + destFile.getAbsolutePath());
+        } catch (Exception e) {
+            android.util.Log.e("QcofA", "导入皮肤文件失败", e);
+            Toast.makeText(requireContext(), "导入皮肤文件失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_SKIN_FILE_REQUEST_CODE && resultCode == android.app.Activity.RESULT_OK
+                && data != null && data.getData() != null) {
+            handleSkinFileImport(data.getData());
         }
     }
 
@@ -704,6 +756,13 @@ private void exportJreToPrivateDirectory() {
                 return fallbackDir;
             }
         }
+        // 【修复 v1.5】即使目录已存在，也检查是否有写入权限
+        if (!storageDir.canWrite()) {
+            android.util.Log.w("QcofA", "QCOFA.COM 目录无写入权限，回退到应用私有目录");
+            File fallbackDir = new File(requireContext().getExternalFilesDir(null), "QCOFA.COM");
+            fallbackDir.mkdirs();
+            return fallbackDir;
+        }
         return storageDir;
     }
 
@@ -712,7 +771,7 @@ private void exportJreToPrivateDirectory() {
         if (uuidText.startsWith("UUID: ")) {
             return uuidText.substring(6); // 去掉 "UUID: " 前缀
         }
-        return null;
+        return uuidText; // 【修复 v1.5】不返回 null，确保 UUID 能被正确提取
     }
 
     private String readFileToString(File file) throws IOException {

@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "QcofA";
     private static final int PERMISSION_REQUEST_CODE = 100;
+    private static final int PICK_SKIN_FILE_REQUEST_CODE = 101;
     
     private EditText usernameInput;
     private EditText customUuidInput;
@@ -95,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // 【新增 v1.4】获取存储目录：优先使用根目录 QCOFA.COM（兼容 Pico 等 VR 设备）
-    // 若创建失败则回退到应用私有目录
+    // 【修复 v1.5】获取存储目录：优先使用根目录 QCOFA.COM（兼容 Pico 等 VR 设备）
+    // 若目录不存在或无法写入则回退到应用私有目录
     private File getStorageDir() {
         // 使用公共存储根目录下的 QCOFA.COM 文件夹，兼容 Pico 等 VR 设备
         File storageDir = new File(Environment.getExternalStorageDirectory(), "QCOFA.COM");
@@ -108,6 +109,14 @@ public class MainActivity extends AppCompatActivity {
                 fallbackDir.mkdirs();
                 return fallbackDir;
             }
+        }
+        // 【修复 v1.5】即使目录已存在，也检查是否有写入权限
+        // Android 11+ 上目录可能存在但无写入权限，此时回退到应用私有目录
+        if (!storageDir.canWrite()) {
+            Log.w(TAG, "QCOFA.COM 目录无写入权限，回退到应用私有目录");
+            File fallbackDir = new File(getExternalFilesDir(null), "QCOFA.COM");
+            fallbackDir.mkdirs();
+            return fallbackDir;
         }
         return storageDir;
     }
@@ -198,11 +207,11 @@ public class MainActivity extends AppCompatActivity {
         
         viewAccountsBtn.setOnClickListener(v -> showAccountsList());
 
-        // 【新增 v1.4】皮肤更换按钮：弹出卡片式版本列表，右侧带下载图标
-        skinChangeBtn.setOnClickListener(v -> showSkinChangeDialog());
+        // 【修改 v1.5】皮肤更换按钮改为导入皮肤文件：选择本地皮肤图片并复制到 QCOFA.COM/skins/ 目录
+        skinChangeBtn.setOnClickListener(v -> importSkinFile());
 
-        // 【新增 v1.4】保存版本列表按钮：将 supportedVersions.json 导出到存储目录
-        saveVersionListBtn.setOnClickListener(v -> saveVersionListToStorage());
+        // 【修改 v1.5】保存版本列表按钮改为下载QCOFAOfflineSkin：打开 GitHub 下载页面
+        saveVersionListBtn.setOnClickListener(v -> downloadQCOFAOfflineSkin());
 
         // 设置折叠/展开功能的点击事件
         LinearLayout expandableSectionHeader = findViewById(R.id.expandableSectionHeader);
@@ -682,6 +691,11 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "缺少存储权限，将无法在存储根目录创建文件", Toast.LENGTH_LONG).show();
                 }
             }
+        } else if (requestCode == PICK_SKIN_FILE_REQUEST_CODE) {
+            // 【新增 v1.5】处理皮肤文件选择结果
+            if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                handleSkinFileImport(data.getData());
+            }
         }
     }
 
@@ -717,88 +731,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // 【新增 v1.4】皮肤更换对话框：从 assets/supportedVersions.json 读取版本列表
-    // 以卡片式布局展示，每行左侧版本号 + 右侧下载图标（仅UI展示，不做功能）
-    private void showSkinChangeDialog() {
+    // 【修改 v1.5】导入皮肤文件：打开系统文件选择器选择皮肤图片
+    // 支持 PNG/JPG 格式，选择后复制到 QCOFA.COM/skins/ 目录
+    private void importSkinFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
         try {
-            InputStream inputStream = getAssets().open("supportedVersions.json");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            reader.close();
-
-            org.json.JSONObject json = new org.json.JSONObject(sb.toString());
-            org.json.JSONArray versions = json.getJSONArray("supportedVersions");
-
-            // 创建卡片式列表
-            LinearLayout listLayout = new LinearLayout(this);
-            listLayout.setOrientation(LinearLayout.VERTICAL);
-            listLayout.setPadding(0, 8, 0, 8);
-
-            for (int i = 0; i < versions.length(); i++) {
-                final String version = versions.getString(i);
-
-                // 每个版本项作为一个卡片
-                android.widget.LinearLayout itemCard = new android.widget.LinearLayout(this);
-                itemCard.setOrientation(android.widget.LinearLayout.HORIZONTAL);
-                itemCard.setPadding(16, 14, 16, 14);
-
-                // 设置卡片背景
-                android.graphics.drawable.GradientDrawable cardBg = new android.graphics.drawable.GradientDrawable();
-                cardBg.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
-                cardBg.setCornerRadius(12);
-                cardBg.setColor(getResources().getColor(R.color.surface_container));
-                cardBg.setStroke(1, getResources().getColor(R.color.outline_variant));
-                itemCard.setBackground(cardBg);
-
-                android.widget.LinearLayout.LayoutParams cardParams = new android.widget.LinearLayout.LayoutParams(
-                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
-                cardParams.setMargins(12, 4, 12, 4);
-                itemCard.setLayoutParams(cardParams);
-
-                // 版本名称（左侧）
-                TextView versionText = new TextView(this);
-                versionText.setText(version);
-                versionText.setTextSize(16);
-                versionText.setTextColor(getResources().getColor(R.color.on_surface));
-                versionText.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
-                        0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-                versionText.setGravity(android.view.Gravity.CENTER_VERTICAL);
-
-                // 下载图标（右侧）- 使用Unicode字符 ⬇
-                TextView downloadIcon = new TextView(this);
-                downloadIcon.setText("⬇");
-                downloadIcon.setTextSize(20);
-                downloadIcon.setTextColor(getResources().getColor(R.color.primary));
-                downloadIcon.setPadding(8, 0, 0, 0);
-                downloadIcon.setGravity(android.view.Gravity.CENTER_VERTICAL);
-
-                itemCard.addView(versionText);
-                itemCard.addView(downloadIcon);
-
-                listLayout.addView(itemCard);
-            }
-
-            // 包装到ScrollView
-            ScrollView scrollView = new ScrollView(this);
-            scrollView.addView(listLayout);
-
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-            builder.setTitle("选择皮肤版本");
-            builder.setView(scrollView);
-            builder.setPositiveButton("关闭", null);
-            builder.show();
+            startActivityForResult(Intent.createChooser(intent, "选择皮肤文件"), PICK_SKIN_FILE_REQUEST_CODE);
         } catch (Exception e) {
-            Log.e("QcofA", "读取版本列表失败", e);
-            Toast.makeText(this, "读取版本列表失败", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "无法打开文件选择器: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    // 【新增 v1.4】保存版本列表：将 assets/supportedVersions.json 复制到 QCOFA.COM 目录
+    // 【修改 v1.5】下载QCOFAOfflineSkin：打开 GitHub 发布页面
+    // 同时将 supportedVersions.json 保存到存储目录（保留原版本列表保存功能）
+    private void downloadQCOFAOfflineSkin() {
+        // 先保存版本列表到存储目录
+        saveVersionListToStorage();
+        // 再打开 QCOFAOfflineSkin 下载页面
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://github.com/XiaoMeow-1145/questcraft-Offline-account-creator/releases"));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "无法打开浏览器: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // 【保留 v1.4】保存版本列表：将 assets/supportedVersions.json 复制到 QCOFA.COM 目录
     // 用于在没有网络时手动提供版本列表文件
     private void saveVersionListToStorage() {
         try {
@@ -824,6 +785,56 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.e("QcofA", "保存版本列表失败", e);
             Toast.makeText(this, "保存版本列表失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // 【新增 v1.5】处理皮肤文件选择结果：将选中的皮肤图片复制到 QCOFA.COM/skins/ 目录
+    private void handleSkinFileImport(Uri skinUri) {
+        try {
+            File storageDir = getStorageDir();
+            File skinsDir = new File(storageDir, "skins");
+            if (!skinsDir.exists()) {
+                skinsDir.mkdirs();
+            }
+
+            // 获取文件名
+            String fileName = "skin_" + System.currentTimeMillis() + ".png";
+            // 尝试从 URI 获取原始文件名
+            String[] projection = {android.provider.OpenableColumns.DISPLAY_NAME};
+            try (android.database.Cursor cursor = getContentResolver().query(skinUri, projection, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex >= 0) {
+                        String originalName = cursor.getString(nameIndex);
+                        if (originalName != null && !originalName.isEmpty()) {
+                            fileName = originalName;
+                        }
+                    }
+                }
+            } catch (Exception ignored) {}
+
+            File destFile = new File(skinsDir, fileName);
+            InputStream inputStream = getContentResolver().openInputStream(skinUri);
+            if (inputStream == null) {
+                Toast.makeText(this, "无法读取选中的文件", Toast.LENGTH_LONG).show();
+                return;
+            }
+            FileOutputStream outputStream = new FileOutputStream(destFile);
+
+            byte[] buffer = new byte[4096];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            inputStream.close();
+            outputStream.close();
+
+            Toast.makeText(this, "皮肤文件已导入: " + destFile.getAbsolutePath(), Toast.LENGTH_LONG).show();
+            Log.d(TAG, "皮肤文件导入成功: " + destFile.getAbsolutePath());
+        } catch (Exception e) {
+            Log.e(TAG, "导入皮肤文件失败", e);
+            Toast.makeText(this, "导入皮肤文件失败: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 }

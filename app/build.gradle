@@ -10,14 +10,24 @@ android {
         applicationId "cn.qcofa.com"
         minSdk 24
         targetSdk 34
-        versionCode 3
-        versionName "1.4.0"
+        versionCode 5
+        versionName "1.5.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile file('/workspace/release.keystore')
+            storePassword 'qcofa123'
+            keyAlias 'qcofa'
+            keyPassword 'qcofa123'
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

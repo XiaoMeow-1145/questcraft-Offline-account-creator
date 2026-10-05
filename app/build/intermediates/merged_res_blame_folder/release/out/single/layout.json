@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "cn.qcofa.com.app-mergeReleaseResources-30:/layout/fragment_home.xml",
+        "source": "cn.qcofa.com.app-main-32:/layout/fragment_home.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-mergeReleaseResources-30:/layout/account_list_item.xml",
+        "source": "cn.qcofa.com.app-main-32:/layout/account_list_item.xml"
+    },
+    {
+        "merged": "cn.qcofa.com.app-mergeReleaseResources-30:/layout/activity_main.xml",
+        "source": "cn.qcofa.com.app-main-32:/layout/activity_main.xml"
+    }
+]

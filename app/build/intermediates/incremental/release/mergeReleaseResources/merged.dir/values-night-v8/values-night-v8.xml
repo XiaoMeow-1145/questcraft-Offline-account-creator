@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="miuix_dark_on_surface">#E6E0EB</color>
+    <color name="miuix_dark_secondary">#FFB58A</color>
+    <color name="miuix_dark_secondary_container">#4A2E1A</color>
+    <color name="miuix_dark_surface">#1C1B1F</color>
+    <color name="miuix_dark_surface_container_highest">#3A322E</color>
+    <color name="miuix_primary">#FF8F5E</color>
+    <color name="miuix_primary_dark">#E55A2B</color>
+    <color name="on_primary">#223062</color>
+    <color name="on_primary_container">#DCE1F9</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="on_surface">#E6E0EB</color>
+    <color name="on_surface_variant">#CAC4D0</color>
+    <color name="outline">#938F99</color>
+    <color name="outline_variant">#47464F</color>
+    <color name="primary">#BAC3FF</color>
+    <color name="primary_container">#2E3678</color>
+    <color name="primary_dark">#9BA3ED</color>
+    <color name="primary_light">#D0D8FF</color>
+    <color name="secondary">#C1C6D9</color>
+    <color name="secondary_container">#44474F</color>
+    <color name="state_error">#BA1A1A</color>
+    <color name="state_error_container">#FFDAD6</color>
+    <color name="state_info">#4758A9</color>
+    <color name="state_info_container">#DCE1F9</color>
+    <color name="state_success">#386A20</color>
+    <color name="state_success_container">#B8F397</color>
+    <color name="state_warning">#7C5800</color>
+    <color name="state_warning_container">#FFDEA6</color>
+    <color name="surface">#1C1B1F</color>
+    <color name="surface_bright">#3B383E</color>
+    <color name="surface_container">#252329</color>
+    <color name="surface_container_high">#2F2D33</color>
+    <color name="surface_container_highest">#3A383E</color>
+    <color name="surface_container_low">#211F26</color>
+    <color name="surface_container_lowest">#0F0D13</color>
+    <color name="surface_dim">#1C1B1F</color>
+    <color name="surface_variant">#47464F</color>
+    <color name="tertiary">#735572</color>
+    <color name="tertiary_container">#FFD8F4</color>
+    <color name="white">#FFFFFFFF</color>
+    <style name="Theme.AppCompat.DayNight" parent="Theme.AppCompat"/>
+    <style name="Theme.AppCompat.DayNight.DarkActionBar" parent="Theme.AppCompat"/>
+    <style name="Theme.AppCompat.DayNight.Dialog" parent="Theme.AppCompat.Dialog"/>
+    <style name="Theme.AppCompat.DayNight.Dialog.Alert" parent="Theme.AppCompat.Dialog.Alert"/>
+    <style name="Theme.AppCompat.DayNight.Dialog.MinWidth" parent="Theme.AppCompat.Dialog.MinWidth"/>
+    <style name="Theme.AppCompat.DayNight.DialogWhenLarge" parent="Theme.AppCompat.DialogWhenLarge"/>
+    <style name="Theme.AppCompat.DayNight.NoActionBar" parent="Theme.AppCompat.NoActionBar"/>
+    <style name="Theme.Material3.DayNight" parent="Theme.Material3.Dark"/>
+    <style name="Theme.Material3.DayNight.BottomSheetDialog" parent="Theme.Material3.Dark.BottomSheetDialog"/>
+    <style name="Theme.Material3.DayNight.Dialog" parent="Theme.Material3.Dark.Dialog"/>
+    <style name="Theme.Material3.DayNight.Dialog.Alert" parent="Theme.Material3.Dark.Dialog.Alert"/>
+    <style name="Theme.Material3.DayNight.Dialog.MinWidth" parent="Theme.Material3.Dark.Dialog.MinWidth"/>
+    <style name="Theme.Material3.DayNight.DialogWhenLarge" parent="Theme.Material3.Dark.DialogWhenLarge"/>
+    <style name="Theme.Material3.DayNight.NoActionBar" parent="Theme.Material3.Dark.NoActionBar"/>
+    <style name="Theme.Material3.DayNight.SideSheetDialog" parent="Theme.Material3.Dark.SideSheetDialog"/>
+    <style name="Theme.Material3.DynamicColors.DayNight" parent="Theme.Material3.DynamicColors.Dark"/>
+    <style name="Theme.MaterialComponents.DayNight" parent="Theme.MaterialComponents"/>
+    <style name="Theme.MaterialComponents.DayNight.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog"/>
+    <style name="Theme.MaterialComponents.DayNight.Bridge" parent="Theme.MaterialComponents.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.DarkActionBar" parent="Theme.MaterialComponents"/>
+    <style name="Theme.MaterialComponents.DayNight.DarkActionBar.Bridge" parent="Theme.MaterialComponents.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog" parent="Theme.MaterialComponents.Dialog"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Alert" parent="Theme.MaterialComponents.Dialog.Alert"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Alert.Bridge" parent="Theme.MaterialComponents.Dialog.Alert.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.Bridge" parent="Theme.MaterialComponents.Dialog.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize" parent="Theme.MaterialComponents.Dialog.FixedSize"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.FixedSize.Bridge" parent="Theme.MaterialComponents.Dialog.FixedSize.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth" parent="Theme.MaterialComponents.Dialog.MinWidth"/>
+    <style name="Theme.MaterialComponents.DayNight.Dialog.MinWidth.Bridge" parent="Theme.MaterialComponents.Dialog.MinWidth.Bridge"/>
+    <style name="Theme.MaterialComponents.DayNight.DialogWhenLarge" parent="Theme.MaterialComponents.DialogWhenLarge"/>
+    <style name="Theme.MaterialComponents.DayNight.NoActionBar" parent="Theme.MaterialComponents.NoActionBar"/>
+    <style name="Theme.MaterialComponents.DayNight.NoActionBar.Bridge" parent="Theme.MaterialComponents.NoActionBar.Bridge"/>
+    <style name="Theme.QcofA" parent="Theme.QcofA.Material"/>
+    <style name="Theme.QcofA.Material" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        
+        
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_container</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+        
+        
+        <item name="android:statusBarColor">@color/surface_container_highest</item>
+        <item name="android:windowBackground">@color/surface</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        
+        
+        <item name="android:colorBackground">@color/surface</item>
+        <item name="android:colorForeground">@color/on_surface</item>
+        
+        
+        <item name="colorError">@color/state_error</item>
+        <item name="colorOnError">@color/white</item>
+        
+        
+        <item name="materialButtonStyle">@style/Widget.QcofA.Button</item>
+        <item name="textInputStyle">@style/Widget.QcofA.TextInputLayout</item>
+    </style>
+    <style name="Theme.QcofA.Miuix" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/miuix_primary</item>
+        <item name="colorPrimaryVariant">@color/miuix_primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/miuix_dark_secondary</item>
+        <item name="colorSecondaryVariant">@color/miuix_dark_secondary_container</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:statusBarColor">@color/miuix_dark_surface_container_highest</item>
+        <item name="android:windowBackground">@color/miuix_dark_surface</item>
+        <item name="colorSurface">@color/miuix_dark_surface</item>
+        <item name="colorOnSurface">@color/miuix_dark_on_surface</item>
+        <item name="android:colorBackground">@color/miuix_dark_surface</item>
+        <item name="android:colorForeground">@color/miuix_dark_on_surface</item>
+        <item name="colorError">@color/state_error</item>
+        <item name="colorOnError">@color/white</item>
+        <item name="materialButtonStyle">@style/Widget.QcofA.MiuixButton</item>
+        <item name="textInputStyle">@style/Widget.QcofA.MiuixTextInputLayout</item>
+    </style>
+    <style name="ThemeOverlay.AppCompat.DayNight" parent="ThemeOverlay.AppCompat.Dark"/>
+    <style name="ThemeOverlay.Material3.DynamicColors.DayNight" parent="ThemeOverlay.Material3.DynamicColors.Dark"/>
+    <style name="Widget.MaterialComponents.ActionBar.PrimarySurface" parent="Widget.MaterialComponents.ActionBar.Surface"/>
+    <style name="Widget.MaterialComponents.AppBarLayout.PrimarySurface" parent="Widget.MaterialComponents.AppBarLayout.Surface"/>
+    <style name="Widget.MaterialComponents.BottomAppBar.PrimarySurface" parent="Widget.MaterialComponents.BottomAppBar"/>
+    <style name="Widget.MaterialComponents.BottomNavigationView.PrimarySurface" parent="Widget.MaterialComponents.BottomNavigationView"/>
+    <style name="Widget.MaterialComponents.NavigationRailView.PrimarySurface" parent="Widget.MaterialComponents.NavigationRailView"/>
+    <style name="Widget.MaterialComponents.TabLayout.PrimarySurface" parent="Widget.MaterialComponents.TabLayout"/>
+    <style name="Widget.MaterialComponents.Toolbar.PrimarySurface" parent="Widget.MaterialComponents.Toolbar.Surface"/>
+    <style name="Widget.QcofA.Button" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/on_primary</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Widget.QcofA.CheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="buttonTint">@color/primary</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+    <style name="Widget.QcofA.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxStrokeColor">@color/outline_variant</item>
+        <item name="hintTextColor">@color/on_surface_variant</item>
+    </style>
+</resources>
