@@ -674,9 +674,10 @@ private void exportJreToPrivateDirectory() {
         }
     }
 
-    // 【修改 v1.5】下载QCOFAOfflineSkin：打开 GitHub 发布页面，同时保存版本列表
+    // 【修改 v1.5】下载QCOFAOfflineSkin：显示支持的版本列表（原皮肤更换功能移植）
+    // 先弹出版本列表对话框，同时打开 QCOFAOfflineSkin 下载页面
     private void downloadQCOFAOfflineSkin() {
-        saveVersionListToStorage();
+        showVersionListDialog();
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse("https://github.com/XiaoMeow-1145/questcraft-Offline-account-creator/releases"));
@@ -684,6 +685,80 @@ private void exportJreToPrivateDirectory() {
             requireContext().startActivity(intent);
         } catch (Exception e) {
             Toast.makeText(requireContext(), "无法打开浏览器: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // 【移植 v1.5】原皮肤更换功能：从 assets/supportedVersions.json 读取版本列表
+    private void showVersionListDialog() {
+        try {
+            InputStream inputStream = requireContext().getAssets().open("supportedVersions.json");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            reader.close();
+
+            JSONObject json = new JSONObject(sb.toString());
+            JSONArray versions = json.getJSONArray("supportedVersions");
+
+            LinearLayout listLayout = new LinearLayout(requireContext());
+            listLayout.setOrientation(LinearLayout.VERTICAL);
+            listLayout.setPadding(0, 8, 0, 8);
+
+            for (int i = 0; i < versions.length(); i++) {
+                final String version = versions.getString(i);
+
+                android.widget.LinearLayout itemCard = new android.widget.LinearLayout(requireContext());
+                itemCard.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+                itemCard.setPadding(16, 14, 16, 14);
+
+                android.graphics.drawable.GradientDrawable cardBg = new android.graphics.drawable.GradientDrawable();
+                cardBg.setShape(android.graphics.drawable.GradientDrawable.RECTANGLE);
+                cardBg.setCornerRadius(12);
+                cardBg.setColor(getResources().getColor(R.color.surface_container));
+                cardBg.setStroke(1, getResources().getColor(R.color.outline_variant));
+                itemCard.setBackground(cardBg);
+
+                android.widget.LinearLayout.LayoutParams cardParams = new android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                        android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+                cardParams.setMargins(12, 4, 12, 4);
+                itemCard.setLayoutParams(cardParams);
+
+                TextView versionText = new TextView(requireContext());
+                versionText.setText(version);
+                versionText.setTextSize(16);
+                versionText.setTextColor(getResources().getColor(R.color.on_surface));
+                versionText.setLayoutParams(new android.widget.LinearLayout.LayoutParams(
+                        0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+                versionText.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+                TextView downloadIcon = new TextView(requireContext());
+                downloadIcon.setText("⬇");
+                downloadIcon.setTextSize(20);
+                downloadIcon.setTextColor(getResources().getColor(R.color.primary));
+                downloadIcon.setPadding(8, 0, 0, 0);
+                downloadIcon.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+                itemCard.addView(versionText);
+                itemCard.addView(downloadIcon);
+
+                listLayout.addView(itemCard);
+            }
+
+            ScrollView scrollView = new ScrollView(requireContext());
+            scrollView.addView(listLayout);
+
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+            builder.setTitle("支持的皮肤版本");
+            builder.setView(scrollView);
+            builder.setPositiveButton("关闭", null);
+            builder.show();
+        } catch (Exception e) {
+            android.util.Log.e("QcofA", "读取版本列表失败", e);
+            Toast.makeText(requireContext(), "读取版本列表失败", Toast.LENGTH_SHORT).show();
         }
     }
 
